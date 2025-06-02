@@ -1,0 +1,117 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  img {
+    width: 100px;
+   
+  }
+
+  body {
+    display: flex;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-repeat: no-repeat;
+      background-size: cover; 
+       position: relative;
+       overflow: hidden;
+  }
+
+
+  h1 {
+    color:black;
+    font-weight: 700;
+    font-size: 150%;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.799);
+  }
+
+  .forms {
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+   
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid rgb(26, 23, 23);
+    width: 100%;
+    padding:60px 30px;
+    background-color: rgba(229, 255, 0, 0.788);
+    background-color: rgba(63, 238, 200, 0.788);
+    border-radius: 9px;
+     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.778);
+     z-index: 2;
+  }
+
+
+  .username, .password {
+    width: 100%;
+    font-weight: 100;
+    color: rgb(0, 0, 0);
+
+  }
+
+  .password {
+    margin-bottom: 15px;
+  }
+
+  .inputs {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+   input{
+    
+    display: block;
+    width: 300px;
+    padding: 5px 20px;
+    height: 32px;
+    padding: 5px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    outline: 0.5px solid rgba(205, 201, 201, 0.811);
+    font-size: 14px;
+  }
+
+  input:focus {
+    box-shadow: inset 0px 0px 0px 1px blue;
+  }
+
+  button {
+    width: 100%;
+    height: 32px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    background: #057570;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+
+  }
+
+  .click:link, click:visited {
+    text-decoration: none;
+    color: rgb(17, 17, 240);
+    
+  }

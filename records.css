@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+
+#residentForm{
+    margin: 50px;
+    margin-left: 150px;
+}
+
+h2{
+
+    margin-left: 500px;
+    margin-top: 10px;
+    font-size: 200%;
+}
+
+body{
+    background-image: url('https://wallpapers.com/images/hd/cover-background-94610v7j54ct7twj.jpg');
+}
+
+button{
+    width: 100px;
+    height: 50px;
+    font-size: 100%;
+    font-weight: bold;
+}

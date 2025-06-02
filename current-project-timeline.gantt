@@ -1,0 +1,23 @@
+---
+title: Demographic Profiling System Gantt Chart
+id: pamanlinan-gantt-2025
+---
+gantt
+    title Demographic Profiling System Development (Apr 18 – Jun 2, 2025)
+    dateFormat  YYYY-MM-DD
+    todayMarker stroke-width:2,stroke:#ff0000,opacity:0.7
+    section Planning & Setup
+    Requirements & DB Design         :done,    a1, 2025-04-18, 3d
+    Initial Project Setup            :done,    a2, 2025-04-21, 2d
+    section Core Features
+    Add/Edit/Update Person           :done,    b1, 2025-04-23, 10d
+    List/Search/Display Records      :done,    b2, 2025-05-03, 7d
+    Bulk Upload/Backup               :done,    b3, 2025-05-10, 7d
+    section UI/UX & Styling
+    Form Layout & CSS                :done,    c1, 2025-05-17, 7d
+    User Feedback/Validation         :done,    c2, 2025-05-24, 5d
+    section Advanced & Misc
+    Additional Features/Modules      :active,  d1, 2025-05-29, 10d
+    Testing & Debugging              :active,  d2, 2025-06-01, 7d
+    section Finalization
+    Documentation & Polish           :active,  e1, 2025-06-08, 5d
