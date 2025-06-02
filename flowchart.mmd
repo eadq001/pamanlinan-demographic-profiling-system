@@ -1,0 +1,34 @@
+---
+title: Demographic Profiling System Flowchart
+id: pamanlinan-flowchart-2025
+---
+flowchart TD
+    A[User visits index.php] --> B{Login or Signup?}
+    B -- Login --> C[login.php: User authentication]
+    B -- Signup --> D[signup.php: Register new user]
+    C --> E{Login Success?}
+    E -- Yes --> F[list.php: View records]
+    E -- No --> C
+    D --> C
+    F --> G[add.php: Add new person]
+    F --> H[edit2.php: Edit person]
+    F --> I[update.php: Update person]
+    F --> J[bulk_upload.php: Bulk upload]
+    F --> K[listBackup.php: View backup]
+    G --> F
+    H --> I
+    I --> F
+    J --> F
+    K --> F
+    F --> L[logout.php: Logout]
+    L --> A
+    F --> M[addBackup.php: Add backup]
+    M --> K
+    F --> N[update_age.php: Update age]
+    N --> F
+    F --> O[edit_update.php: Edit and update]
+    O --> F
+    F --> P[Records.html: View static records]
+    P --> F
+    F --> Q[Other features (validation, search, etc.)]
+    Q --> F

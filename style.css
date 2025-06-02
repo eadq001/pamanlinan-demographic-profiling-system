@@ -1,0 +1,47 @@
+body{
+    background-image: url(background.webp);
+    background-repeat: no-repeat;
+   
+    
+}
+
+
+
+.logo{
+  background-color: #ffffff;
+  margin-top: -10px;
+  
+}
+img{
+    width: 200px;
+    height: 190px;
+    border-radius: 600px;
+    margin-left: 300px;
+}
+h2{
+    position: absolute;
+    margin-top: -150px;
+    margin-left: 550px;
+}
+.human{
+    position: absolute;
+    align-items: center;
+    align-content: center;
+    width: 200px;
+    height: 100px;
+    margin-left: 950px;
+    margin-top: 50px;
+
+}
+
+.human a{
+    display: flex;
+    align-content: center;
+    text-decoration-line: none;
+    background-color: blanchedalmond;
+    font-size: xx-large;
+    width: 100px;
+    margin-left: 10px;
+    
+   
+}

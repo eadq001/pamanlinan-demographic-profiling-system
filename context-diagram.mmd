@@ -1,0 +1,18 @@
+---
+title: Demographic Profiling System Context Diagram
+id: pamanlinan-context-diagram-2025
+---
+block-beta
+  columns 3
+  User["User<br/>(Residents, Staff)"]
+  WebApp["Web Application<br/>(index.php, login.php, signup.php, add.php, edit2.php, list.php, etc.)"]
+  Database["MySQL Database<br/>(people, users, etc.)"]
+  
+  User --> WebApp
+  WebApp --> Database
+  Database --> WebApp
+  WebApp --> User
+  
+  style User fill:#b3e6ff,stroke:#333,stroke-width:2px
+  style WebApp fill:#baffc9,stroke:#333,stroke-width:2px
+  style Database fill:#ffd6a5,stroke:#333,stroke-width:2px

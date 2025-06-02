@@ -1,0 +1,28 @@
+
+  input[type="submit"] {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  input[type="submit"]:hover {
+    background: #218838;
+  }
+
+  form.upload_files {
+    display: grid;
+    grid-template-columns: auto 180px auto;
+    gap: 20px;
+    place-content: center;
+    align-items: center; 
+    margin-bottom: 0;
+  }
+
+ 
+  .upload-files-box {
+    display: flex;
+    align-items: center;
+    margin-left: 90px;
+  }
