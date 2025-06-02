@@ -1,4 +1,11 @@
 <?php
+//page can't be accessed when not logged in
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -157,7 +164,7 @@ $conn->close();
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="add.php">ADD</a></li>
-      <li><a href="index.php">LOGOUT</a></li>
+      <li><a href="logout.php">LOGOUT</a></li>
     </ul>
     <div class="burger" id="burger">&#9776;</div>
   </nav>

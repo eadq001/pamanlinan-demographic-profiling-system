@@ -1,4 +1,11 @@
 <?php
+//page can't be accessed when not logged in
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 $conn = new mysqli("localhost", "root", "", "pamanlinan_db");
 
 // Get all POST values
