@@ -212,7 +212,23 @@ $conn->close();
       });
       ?>
       
-      <?php foreach ($people as $person): ?>
+      <?php foreach ($people as $person): 
+        // Calculate age based on date_of_birth and current date
+        $dob = $person['date_of_birth'];
+        $calculatedAge = '';
+        if ($dob && strtotime($dob)) {
+          $birthDate = new DateTime($dob);
+          $today = new DateTime();
+          $calculatedAge = $today->diff($birthDate)->y;
+          // Update DB if calculated age is different from stored age
+          if (isset($person['age']) && $calculatedAge != $person['age']) {
+            $updateStmt = $pdo->prepare("UPDATE people SET age = ? WHERE last_name = ? AND first_name = ? AND middle_name = ?");
+            $updateStmt->execute([$calculatedAge, $person['last_name'], $person['first_name'], $person['middle_name']]);
+          }
+        } else {
+          $calculatedAge = htmlspecialchars($person['age']); // fallback
+        }
+      ?>
         <tr>
           <td><?= htmlspecialchars($person['last_name']) ?></td>
           <td><?= htmlspecialchars($person['first_name']) ?></td>
@@ -223,7 +239,7 @@ $conn->close();
           <td><?= htmlspecialchars($person['purok_name']) ?></td>
           <td><?= htmlspecialchars($person['place_of_birth']) ?></td>
           <td><?= htmlspecialchars($person['date_of_birth']) ?></td>
-          <td><?= htmlspecialchars($person['age']) ?></td>
+          <td><?= $calculatedAge ?></td>
           <td><?= htmlspecialchars($person['civil_status']) ?></td>
           <td><?= htmlspecialchars($person['citizenship']) ?></td>
           <td><?= htmlspecialchars($person['employed_unemployed']) ?></td>
@@ -342,7 +358,7 @@ $conn->close();
       const lastName = encodeURIComponent(cells[0]?.innerText || '');
       const firstName = encodeURIComponent(cells[1]?.innerText || '');
       const middleName = encodeURIComponent(cells[2]?.innerText || '');
-      const editUrl = `edit2.php?last_name=${lastName}&first_name=${firstName}&middle_name=${middleName}`;
+      const editUrl = `edit.php?last_name=${lastName}&first_name=${firstName}&middle_name=${middleName}`;
       if (editUrl) {
         popupEditBtnContainer.innerHTML = `<a href="${editUrl}" target="_blank" style="font-size:13px;text-align:left;padding:7px 16px;background:#6ca0a3;color:#fff;text-decoration:none;border-radius:4px;transition:background 0.2s;">Edit</a>`;
       } else {

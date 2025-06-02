@@ -1,48 +1,40 @@
 <?php
-// filepath: c:\xampp\htdocs\pamanlinan\edit.php
-// Connection to database
+
 $conn = new mysqli("localhost", "root", "", "pamanlinan_db");
 
-// Get the ID from the URL
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// Extract values from URL query parameters
+$last_name = isset($_GET['last_name']) ? $_GET['last_name'] : '';
+$first_name = isset($_GET['first_name']) ? $_GET['first_name'] : '';
+$middle_name = isset($_GET['middle_name']) ? $_GET['middle_name'] : '';
 
-
-// Fetch the record based on the ID
-if ($id > 0) {
-    $stmt = $conn->prepare("SELECT * FROM people WHERE id = ?");
-    $stmt->bind_param("i", $id);
+$person = null;
+if ($last_name && $first_name && $middle_name) {
+    $stmt = $conn->prepare("SELECT * FROM people WHERE last_name=? AND first_name=? AND middle_name=? LIMIT 1");
+    $stmt->bind_param("sss", $last_name, $first_name, $middle_name);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-    } else {
-        echo "<script>alert('No record found for the given ID.'); window.location.href='list.php';</script>";
-        exit;
-    }
-
+    $person = $result->fetch_assoc();
     $stmt->close();
-} else {
-    echo "<script>alert('Invalid ID.'); window.location.href='list.php';</script>";
-    exit;
 }
 
-
-
+// Display the extracted values
+echo "Last Name: " . htmlspecialchars($last_name) . "<br>";
+echo "First Name: " . htmlspecialchars($first_name) . "<br>";
+echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Edit Details</title>
-  <link rel="stylesheet" href="font.css" />
-  <link rel="stylesheet" href="add.css" />
-  <link rel="stylesheet" href="add2.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="add.css" />
+    <link rel="stylesheet" href="add2.css" />
 </head>
-
+<body>
+    
 <header>
     <nav class="navbar">
       <div class="logo">Demographic Profiling System form</div>
@@ -53,54 +45,78 @@ if ($id > 0) {
     </nav>
   </header>
 
+<form method="post" action="update.php" autocomplete="off">
+    <h1>EDIT DETAILS</h1>
 
-<body>
-  <form method="post" action="update.php" autocomplete="off">
-    <h1>Edit Details</h1>
-
-    <input type="hidden" name="id" value="<?= $row['id'] ?>" />
+    <input type="hidden" name="orig_last_name" value="<?php echo htmlspecialchars($person['last_name'] ?? ''); ?>">
+    <input type="hidden" name="orig_first_name" value="<?php echo htmlspecialchars($person['first_name'] ?? ''); ?>">
+    <input type="hidden" name="orig_middle_name" value="<?php echo htmlspecialchars($person['middle_name'] ?? ''); ?>">
 
     <h2>Personal Information</h2>
     <div class="grid">
       <div>
         <label>Last Name</label>
-        <input type="text" name="last_name" value="<?= htmlspecialchars($row['last_name']) ?>" required />
+        <input type="text" name="last_name" required value="<?php echo htmlspecialchars($person['last_name'] ?? ''); ?>" />
       </div>
       <div>
         <label>First Name</label>
-        <input type="text" name="first_name" value="<?= htmlspecialchars($row['first_name']) ?>" required />
+        <input type="text" name="first_name" required value="<?php echo htmlspecialchars($person['first_name'] ?? ''); ?>" />
       </div>
       <div>
         <label>Middle Name</label>
-        <input type="text" name="middle_name" value="<?= htmlspecialchars($row['middle_name']) ?>" />
+        <input type="text" name="middle_name" value="<?php echo htmlspecialchars($person['middle_name'] ?? ''); ?>" />
       </div>
       <div>
         <label>Extension Name</label>
-        <input type="text" name="ext_name" value="<?= htmlspecialchars($row['ext_name']) ?>" />
+        <input
+          type="text"
+          name="ext_name"
+          list="ext-options"
+          placeholder="Select or type extension"
+          value="<?php echo htmlspecialchars($person['ext_name'] ?? ''); ?>"
+        />
       </div>
+      <datalist id="ext-options">
+        <option value="N/A"></option>
+        <option value="Jr."></option>
+        <option value="Sr."></option>
+        <option value="II"></option>
+        <option value="III"></option>
+        <option value="IV"></option>
+        <option value="Other"></option>
+      </datalist>
       <div>
         <label>Sex</label>
         <select name="sex_name" required>
-          <option value="Male" <?= $row['sex_name'] == 'Male' ? 'selected' : '' ?>>Male</option>
-          <option value="Female" <?= $row['sex_name'] == 'Female' ? 'selected' : '' ?>>Female</option>
+          <option value="">-- Select --</option>
+          <option value="Male" <?php if(strtolower(trim($person['sex_name'] ?? ''))=='male') echo 'selected'; ?>>Male</option>
+          <option value="Female" <?php if(strtolower(trim($person['sex_name'] ?? ''))=='female') echo 'selected'; ?>>Female</option>
         </select>
       </div>
       <div>
         <label>Birthdate</label>
-        <input type="text" name="date_of_birth" value="<?= htmlspecialchars($row['date_of_birth']) ?>" required />
+        <input type="text" name="date_of_birth" required placeholder="MM/DD/YYYY" value="<?php echo htmlspecialchars($person['date_of_birth'] ?? ''); ?>"><br>
+      </div>
+      <div>
+        <label>Age</label>
+        <input type="text" name="age" value="<?php echo htmlspecialchars($person['age'] ?? ''); ?>" readonly />
       </div>
       <div>
         <label>Civil Status</label>
         <select name="civil_status" required>
-          <option value="Single" <?= $row['civil_status'] == 'Single' ? 'selected' : '' ?>>Single</option>
-          <option value="Married" <?= $row['civil_status'] == 'Married' ? 'selected' : '' ?>>Married</option>
-          <option value="Widowed" <?= $row['civil_status'] == 'Widowed' ? 'selected' : '' ?>>Widowed</option>
-          <option value="Separated" <?= $row['civil_status'] == 'Separated' ? 'selected' : '' ?>>Separated</option>
+          <option value="">-- Select --</option>
+          <?php
+          $statuses = ['N/A','Single','Married','Widowed','Separated','Divorced','Live-in','Other'];
+          foreach($statuses as $status) {
+            $sel = (strtolower(trim($person['civil_status'] ?? '')) == strtolower($status)) ? 'selected' : '';
+            echo "<option value=\"$status\" $sel>$status</option>";
+          }
+          ?>
         </select>
       </div>
       <div>
         <label>Place of Birth</label>
-        <input type="text" name="place_of_birth" value="<?= htmlspecialchars($row['place_of_birth']) ?>" required />
+        <input type="text" name="place_of_birth" required value="<?php echo htmlspecialchars($person['place_of_birth'] ?? ''); ?>" />
       </div>
     </div>
 
@@ -108,19 +124,19 @@ if ($id > 0) {
     <div class="grid">
       <div>
         <label>Street Name</label>
-        <input type="text" name="street_name" value="<?= htmlspecialchars($row['street_name']) ?>" required />
+        <input type="text" name="street_name" required value="<?php echo htmlspecialchars($person['street_name'] ?? ''); ?>" />
       </div>
       <div>
         <label>Purok Name</label>
-        <input type="text" name="purok_name" value="<?= htmlspecialchars($row['purok_name']) ?>" required />
+        <input type="text" name="purok_name" required value="<?php echo htmlspecialchars($person['purok_name'] ?? ''); ?>" />
       </div>
       <div>
         <label>Contact No.</label>
-        <input type="tel" name="cellphone_no" value="<?= htmlspecialchars($row['cellphone_no']) ?>" required />
+        <input type="tel" name="cellphone_no" required value="<?php echo htmlspecialchars($person['cellphone_no'] ?? ''); ?>" />
       </div>
       <div>
         <label>Facebook Account</label>
-        <input type="text" name="facebook" value="<?= htmlspecialchars($row['facebook']) ?>" />
+        <input type="text" name="facebook" value="<?php echo htmlspecialchars($person['facebook'] ?? ''); ?>" />
       </div>
     </div>
 
@@ -128,47 +144,112 @@ if ($id > 0) {
     <div class="grid">
       <div>
         <label>Employed/Unemployed</label>
-        <input type="text" name="employed_unemployed" value="<?= htmlspecialchars($row['employed_unemployed']) ?>" required />
+        <input
+          type="text"
+          name="employed_unemployed"
+          list="employed_unemployed-options"
+          placeholder="Select or type occupation"
+          required
+          value="<?php echo htmlspecialchars($person['employed_unemployed'] ?? ''); ?>"
+        />
       </div>
+      <datalist id="employed_unemployed-options">
+        <option>N/A</option>
+        <option value="Self-employed"></option>
+        <option value="Unemployed"></option>
+        <option value="Other"></option>
+      </datalist>
       <div>
         <label>Occupation</label>
-        <input type="text" name="occupation" value="<?= htmlspecialchars($row['occupation']) ?>" required />
+        <input type="text" name="occupation" required value="<?php echo htmlspecialchars($person['occupation'] ?? ''); ?>" />
       </div>
       <div>
         <label>Solo Parent</label>
         <select name="solo_parent" required>
-          <option value="Yes" <?= $row['solo_parent'] == 'Yes' ? 'selected' : '' ?>>Yes</option>
-          <option value="No" <?= $row['solo_parent'] == 'No' ? 'selected' : '' ?>>No</option>
+          <option value="">-- Select --</option>
+          <?php
+          $opts = ['N/A','Yes','No','Other'];
+          foreach($opts as $opt) {
+            $sel = (strtolower(trim($person['solo_parent'] ?? '')) == strtolower($opt)) ? 'selected' : '';
+            echo "<option value=\"$opt\" $sel>$opt</option>";
+          }
+          ?>
         </select>
       </div>
       <div>
         <label>OFW</label>
-        <input type="text" name="ofw" value="<?= htmlspecialchars($row['ofw']) ?>" required />
+        <input
+          type="text"
+          name="ofw"
+          list="ofw-options"
+          placeholder="Select or type if yes (Please Specify)"
+          required
+          value="<?php echo htmlspecialchars($person['ofw'] ?? ''); ?>"
+        />
       </div>
+      <datalist id="ofw-options">
+        <option>N/A</option>
+        <option value="Yes"></option>
+        <option value="No"></option>
+        <option value="Other"></option>
+      </datalist>
       <div>
         <label>Out-of-school Youth</label>
         <select name="school_youth" required>
-          <option value="Yes" <?= $row['school_youth'] == 'Yes' ? 'selected' : '' ?>>Yes</option>
-          <option value="No" <?= $row['school_youth'] == 'No' ? 'selected' : '' ?>>No</option>
+          <option value="">-- Select --</option>
+          <?php
+          foreach($opts as $opt) {
+            $sel = (strtolower(trim($person['school_youth'] ?? '')) == strtolower($opt)) ? 'selected' : '';
+            echo "<option value=\"$opt\" $sel>$opt</option>";
+          }
+          ?>
         </select>
       </div>
       <div>
         <label>PWD</label>
-        <input type="text" name="pwd" value="<?= htmlspecialchars($row['pwd']) ?>" required />
+        <input
+          type="text"
+          name="pwd"
+          list="pwd-options"
+          placeholder="Select or type if yes (please specify)"
+          required
+          value="<?php echo htmlspecialchars($person['pwd'] ?? ''); ?>"
+        />
       </div>
+      <datalist id="pwd-options">
+        <option>N/A</option>
+        <option value="Yes"></option>
+        <option value="No"></option>
+        <option value="Other"></option>
+      </datalist>
       <div>
         <label>Indigenous People</label>
-        <input type="text" name="indigenous" value="<?= htmlspecialchars($row['indigenous']) ?>" required />
+        <input
+          type="text"
+          name="indigenous"
+          list="indigenous-options"
+          placeholder="Select or type if applicable"
+          required
+          value="<?php echo htmlspecialchars($person['indigenous'] ?? ''); ?>"
+        />
       </div>
+      <datalist id="indigenous-options">
+        <option>N/A</option>
+        <option value="Yes"></option>
+        <option value="No"></option>
+        <option value="Other"></option>
+      </datalist>
       <div>
         <label>Citizenship</label>
-        <input type="text" name="citizenship" value="<?= htmlspecialchars($row['citizenship']) ?>" required />
+        <input type="text" name="citizenship" required value="<?php echo htmlspecialchars($person['citizenship'] ?? ''); ?>" />
       </div>
       <div>
         <label>Toilet</label>
         <select name="toilet" required>
-          <option value="Yes" <?= $row['toilet'] == 'Yes' ? 'selected' : '' ?>>Yes</option>
-          <option value="No" <?= $row['toilet'] == 'No' ? 'selected' : '' ?>>No</option>
+          <option value="">-- Select --</option>
+          <option value="N/A" <?php if(strtolower(trim($person['toilet'] ?? ''))=='n/a') echo 'selected'; ?>>N/A</option>
+          <option value="Yes" <?php if(strtolower(trim($person['toilet'] ?? ''))=='yes') echo 'selected'; ?>>Yes</option>
+          <option value="No" <?php if(strtolower(trim($person['toilet'] ?? ''))=='no') echo 'selected'; ?>>No</option>
         </select>
       </div>
     </div>
@@ -177,19 +258,23 @@ if ($id > 0) {
     <div class="grid">
       <div>
         <label>Valid ID</label>
-        <input type="text" name="valid_id" value="<?= htmlspecialchars($row['valid_id']) ?>" required />
+        <input type="text" name="valid_id" required value="<?php echo htmlspecialchars($person['valid_id'] ?? ''); ?>" />
       </div>
       <div>
         <label>Type of ID</label>
-        <input type="text" name="type_id" value="<?= htmlspecialchars($row['type_id']) ?>" required />
+        <input type="text" name="type_id" required value="<?php echo htmlspecialchars($person['type_id'] ?? ''); ?>" />
       </div>
+      <div>
+        <label>Household ID</label>
+          <input type="text" name="household_id" required value="<?php echo htmlspecialchars($person['household_id'] ?? ''); ?>" />
+        </div>
     </div>
 
-    <button type="submit">Update</button>
-  </form>
+    <button type="submit">Save</button>
+</form>
 
-    <!-- Add this script before the closing </body> tag -->
-    <script>
+
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   // Handle all input fields except facebook
   const inputs = document.querySelectorAll('input:not([name="facebook"])');
@@ -216,5 +301,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
 </body>
 </html>
