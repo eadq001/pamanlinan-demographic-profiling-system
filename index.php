@@ -244,7 +244,6 @@
     <h2>Profiling System</h2><br>
   <div class="btn">
   <a href="login.php" class="fancy-button">Login</a>
-  <a href="signup.php" class="fancy-button">Signup</a>
 </div>
 </section>
 

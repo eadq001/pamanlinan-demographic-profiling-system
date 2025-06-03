@@ -300,7 +300,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div>
         <label>Purok Name</label>
-        <input type="text" name="purok_name" required />
+          <select name="purok_name" required>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2A">Purok 2A</option>
+            <option value="Purok 2B">Purok 2B</option>
+            <option value="Purok 3">Purok 3</option>
+            <option value="Purok 4">Purok 4</option>
+            <option value="Purok 5">Purok 5</option>
+            <option value="Purok 6">Purok 6</option>
+          </select>
       </div>
       <div>
         <label>Contact No.</label>

@@ -84,7 +84,6 @@ include("functions.php");
 					<input id="text" type="password" name="password">
 				</div>
 				<button id="button" type="submit" value="Login"> Sign in </button>
-				<a href="signup.php" class="click">Click to Signup</a>
   				<?php
 				
 				if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -112,9 +111,8 @@ include("functions.php");
 			}
 		}
 
-		echo "<p style='text-align:left;color:#f03e3e'> wrong username or password! </p>";
 	} else {
-		echo "wrong username or password!";
+		echo "<p style='color:red !important;'> wrong username or password! </p>";
 	}
 }
 				

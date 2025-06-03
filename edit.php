@@ -135,8 +135,18 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
         <input type="text" name="street_name" required value="<?php echo htmlspecialchars($person['street_name'] ?? ''); ?>" />
       </div>
       <div>
+        <!-- purok -->
         <label>Purok Name</label>
-        <input type="text" name="purok_name" required value="<?php echo htmlspecialchars($person['purok_name'] ?? ''); ?>" />
+        <select name="purok_name" required>
+          <option value="">-- Select --</option>
+          <?php
+          $opts = ['Purok 1','Purok 2A','Purok 2B','Purok 3','Purok 4','Purok 5','Purok 6'];
+          foreach($opts as $opt) {
+            $sel = (strtolower(trim($person['purok_name'] ?? '')) == strtolower($opt)) ? 'selected' : '';
+            echo "<option value=\"$opt\" $sel>$opt</option>";
+          }
+          ?>
+        </select>
       </div>
       <div>
         <label>Contact No.</label>
