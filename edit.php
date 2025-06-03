@@ -39,6 +39,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
     <title>Document</title>
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
+    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
 </head>
 <body>
     

@@ -96,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <title>Brgy. Pamanlinan | Add Person</title>
   <link rel="stylesheet" href="font.css" />
   <link rel="stylesheet" href="add.css" />
+  <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
   <style>
     body {
       background: linear-gradient(to right, #6ca0a3, #ffffff);
@@ -214,6 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <ul class="nav-links">
         <li><a href="list.php">LIST</a></li>               
         <li><a href="logout.php">LOGOUT</a></li>
+        
       </ul>
     </nav>
   </header>
