@@ -19,8 +19,11 @@ $purokCounts = array_column($purokData, 'count');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purok Population Chart</title>
+    <title>Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="add.css" />
+    <link rel="stylesheet" href="add2.css" />
+    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <style>
         body { font-family: Arial, sans-serif; background: #f4f8fb; margin: 0; padding: 0; }
         .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); padding: 32px; }
@@ -29,9 +32,25 @@ $purokCounts = array_column($purokData, 'count');
     </style>
 </head>
 <body>
+    <header style="position: relative;">
+    <nav class="navbar">
+      <div class="logo">Demographic Profiling System form</div>
+      <ul class="nav-links">
+        <li><a href="add.php">ADD</a></li>
+        <li><a href="list.php">LIST</a></li>
+        <li><a href="logout.php">LOGOUT</a></li>
+      </ul>
+    </nav>
+  </header>
     <div class="container">
         <h2>Population per Purok</h2>
         <canvas id="purokChart" width="600" height="350"></canvas>
+        <div id="totalPopulation" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
+            <?php
+                $totalPopulation = array_sum($purokCounts);
+                echo "Total Population: " . $totalPopulation;
+            ?>
+        </div>
     </div>
     <script>
         const purokNames = <?php echo json_encode($purokNames); ?>;

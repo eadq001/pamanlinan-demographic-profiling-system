@@ -156,6 +156,7 @@ $conn->close();
   <nav>
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
+      <li><a href="dashboard.php">DASHBOARD</a></li>
       <li><a href="add.php">ADD</a></li>
       <li><a href="index.php">LOGOUT</a></li>
     </ul>
@@ -214,31 +215,31 @@ $conn->close();
       
       <?php foreach ($people as $person): ?>
         <tr>
-          <td><?= htmlspecialchars($person['last_name']) ?></td>
-          <td><?= htmlspecialchars($person['first_name']) ?></td>
-          <td><?= htmlspecialchars($person['middle_name']) ?></td>
-          <td><?= htmlspecialchars($person['ext_name']) ?></td>
-          <td><?= htmlspecialchars($person['sex_name']) ?></td>
-          <td><?= htmlspecialchars($person['street_name']) ?></td>
-          <td><?= htmlspecialchars($person['purok_name']) ?></td>
-          <td><?= htmlspecialchars($person['place_of_birth']) ?></td>
-          <td><?= htmlspecialchars($person['date_of_birth']) ?></td>
-          <td><?= htmlspecialchars($person['age']) ?></td>
-          <td><?= htmlspecialchars($person['civil_status']) ?></td>
-          <td><?= htmlspecialchars($person['citizenship']) ?></td>
-          <td><?= htmlspecialchars($person['employed_unemployed']) ?></td>
-          <td><?= htmlspecialchars($person['solo_parent']) ?></td>
-          <td><?= htmlspecialchars($person['ofw']) ?></td>
-          <td><?= htmlspecialchars($person['occupation']) ?></td>
-          <td><?= htmlspecialchars($person['toilet']) ?></td>
-          <td><?= htmlspecialchars($person['school_youth']) ?></td>
-          <td><?= htmlspecialchars($person['pwd']) ?></td>
-          <td><?= htmlspecialchars($person['indigenous']) ?></td>
-          <td><?= htmlspecialchars($person['cellphone_no']) ?></td>
-          <td><?= htmlspecialchars($person['facebook']) ?></td>
-          <td><?= htmlspecialchars($person['valid_id']) ?></td>
-          <td><?= htmlspecialchars($person['type_id']) ?></td>
-          <td><?= htmlspecialchars($person['household_id']) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['last_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['first_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['middle_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['ext_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['sex_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['street_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['purok_name'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['place_of_birth'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['date_of_birth'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['age'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['civil_status'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['citizenship'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['employed_unemployed'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['solo_parent'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['ofw'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['occupation'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['toilet'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['school_youth'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['pwd'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['indigenous'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['cellphone_no'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['facebook'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
+          <td><?= htmlspecialchars(rtrim($person['household_id'])) ?></td>
         </tr>
       <?php endforeach; ?>
 
