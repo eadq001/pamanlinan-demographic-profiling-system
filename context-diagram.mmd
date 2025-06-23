@@ -16,3 +16,13 @@ block-beta
   style User fill:#b3e6ff,stroke:#333,stroke-width:2px
   style WebApp fill:#baffc9,stroke:#333,stroke-width:2px
   style Database fill:#ffd6a5,stroke:#333,stroke-width:2px
+
+%%{init: { 'theme': 'base', 'themeVariables': { 'actorTextColor': '#222', 'actorBorder': '#999', 'actorBkg': '#e0f7fa', 'actorLineColor': '#999', 'labelBoxBkgColor': '#fff', 'labelBoxBorderColor': '#999' } } }%%
+
+flowchart TD
+    User((User))
+    System["Brgy. Pamanlinan Demographic Profiling System"]
+    Database[(MySQL Database)]
+
+    User -- interacts with --> System
+    System -- reads/writes --> Database

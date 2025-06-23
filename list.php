@@ -1,11 +1,4 @@
 <?php
-//page can't be accessed when not logged in
-session_start();
-if (empty($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
-
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -164,7 +157,7 @@ $conn->close();
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="add.php">ADD</a></li>
-      <li><a href="logout.php">LOGOUT</a></li>
+      <li><a href="index.php">LOGOUT</a></li>
     </ul>
     <div class="burger" id="burger">&#9776;</div>
   </nav>
@@ -219,23 +212,7 @@ $conn->close();
       });
       ?>
       
-      <?php foreach ($people as $person): 
-        // Calculate age based on date_of_birth and current date
-        $dob = $person['date_of_birth'];
-        $calculatedAge = '';
-        if ($dob && strtotime($dob)) {
-          $birthDate = new DateTime($dob);
-          $today = new DateTime();
-          $calculatedAge = $today->diff($birthDate)->y;
-          // Update DB if calculated age is different from stored age
-          if (isset($person['age']) && $calculatedAge != $person['age']) {
-            $updateStmt = $pdo->prepare("UPDATE people SET age = ? WHERE last_name = ? AND first_name = ? AND middle_name = ?");
-            $updateStmt->execute([$calculatedAge, $person['last_name'], $person['first_name'], $person['middle_name']]);
-          }
-        } else {
-          $calculatedAge = htmlspecialchars($person['age']); // fallback
-        }
-      ?>
+      <?php foreach ($people as $person): ?>
         <tr>
           <td><?= htmlspecialchars($person['last_name']) ?></td>
           <td><?= htmlspecialchars($person['first_name']) ?></td>
@@ -246,7 +223,7 @@ $conn->close();
           <td><?= htmlspecialchars($person['purok_name']) ?></td>
           <td><?= htmlspecialchars($person['place_of_birth']) ?></td>
           <td><?= htmlspecialchars($person['date_of_birth']) ?></td>
-          <td><?= $calculatedAge ?></td>
+          <td><?= htmlspecialchars($person['age']) ?></td>
           <td><?= htmlspecialchars($person['civil_status']) ?></td>
           <td><?= htmlspecialchars($person['citizenship']) ?></td>
           <td><?= htmlspecialchars($person['employed_unemployed']) ?></td>

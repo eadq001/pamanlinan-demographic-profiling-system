@@ -1,0 +1,29 @@
+%%{init: { 'theme': 'base', 'themeVariables': { 'actorTextColor': '#222', 'actorBorder': '#999', 'actorBkg': '#e0f7fa', 'actorLineColor': '#999', 'labelBoxBkgColor': '#fff', 'labelBoxBorderColor': '#999' } } }%%
+
+flowchart TD
+    User((User))
+    Login[Login Page]
+    List[List Page]
+    Add[Add Record]
+    Edit[Edit Record]
+    BulkUpload[Bulk Upload]
+    Update[Update Record]
+    Logout[Logout]
+    DB[(MySQL Database)]
+
+    User -- login credentials --> Login
+    Login -- success --> List
+    Login -- fail --> Login
+    List -- view, search, export, import --> List
+    List -- add new --> Add
+    List -- edit record --> Edit
+    List -- bulk upload --> BulkUpload
+    List -- update record --> Update
+    List -- logout --> Logout
+    Add -- submit new record --> DB
+    Edit -- update record --> DB
+    BulkUpload -- import Excel/CSV --> DB
+    Update -- update age/fields --> DB
+    List -- fetch people --> DB
+    Login -- check credentials --> DB
+    Logout -- end session --> Login
