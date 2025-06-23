@@ -164,26 +164,96 @@ $conn->close();
   </nav>
 </header>
 
-<div style="margin: 20px; display: flex; align-items:center;" class="search-upload-box">
+<?php
+// Map filter labels to database columns
+$filterOptions = [
+  "Last Name" => "last_name",
+  "First Name" => "first_name",
+  "Middle Name" => "middle_name",
+  "Ext" => "ext_name",
+  "Sex" => "sex_name",
+  "Street" => "street_name",
+  "Purok Name" => "purok_name",
+  "Place of Birth" => "place_of_birth",
+  "Birth Date" => "date_of_birth",
+  "Age" => "age",
+  "Civil Status" => "civil_status",
+  "Citizenship" => "citizenship",
+  // Custom filter for Employed/Unemployed
+  "Employed" => "employed_unemployed:Employed",
+  "Unemployed" => "employed_unemployed:Unemployed",
+  "Solo Parent" => "solo_parent",
+  "OFW" => "ofw",
+  "Occupation" => "occupation",
+  "Toilet" => "toilet",
+  "School Youth" => "school_youth",
+  "PWD" => "pwd",
+  "Indigenous" => "indigenous",
+  "Contact no." => "cellphone_no",
+  "Facebook" => "facebook",
+  "Valid ID" => "valid_id",
+  "ID Type" => "type_id",
+  "Household ID" => "household_id"
+];
 
-  <!-- Search and Filter -->
-  <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search..." style="padding: 10px; width: 300px;">
-  <select id="columnSelect" onchange="filterTable()" style="padding: 10px;">
-    <option value="all">All Columns</option>
-    <?php
-    $columns = [
-        "Last Name", "First Name", "Middle Name", "Ext", "Sex", "Street", "Purok Name", "Place of Birth", "Birth Date",
-        "Age", "Civil Status", "Citizenship", "Employed/Unemployed", "Solo Parent", "OFW",
-        "Occupation", "Toilet", "School Youth", "PWD", "Indigenous", "Contact no.", "Facebook", "Valid ID", "ID Type", "Household ID"
-    ];
-    foreach ($columns as $index => $col) {
-        echo "<option value=\"$index\">$col</option>";
+$searchValue = isset($_GET['search_value']) ? trim($_GET['search_value']) : '';
+$searchColumn = isset($_GET['search_column']) ? $_GET['search_column'] : '';
+$totalCount = $pdo->query("SELECT COUNT(*) FROM people")->fetchColumn();
+
+$filteredPeople = $people;
+$resultCount = count($people);
+
+if (isset($filterOptions[$searchColumn])) {
+  $filter = $filterOptions[$searchColumn];
+  if (strpos($filter, ':') !== false) {
+    // For Employed/Unemployed exact match, ignore search value
+    list($col, $val) = explode(':', $filter, 2);
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
+    $stmt->execute([$val]);
+  } elseif ($searchValue !== '') {
+    $col = $filter;
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE $col LIKE ?");
+    $stmt->execute(['%' . $searchValue . '%']);
+  }
+  if (isset($stmt)) {
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  }
+} elseif ($searchValue !== '' && $searchColumn === 'All') {
+  // Search all columns
+  $where = [];
+  $params = [];
+  foreach ($filterOptions as $col) {
+    if (strpos($col, ':') !== false) {
+      $col = explode(':', $col, 2)[0];
     }
-    ?>
-  </select>
-  <button onclick="exportToCSV()" style="padding: 10px;">Export CSV</button>
+    $where[] = "$col LIKE ?";
+    $params[] = '%' . $searchValue . '%';
+  }
+  $stmt = $pdo->prepare("SELECT * FROM people WHERE " . implode(' OR ', $where));
+  $stmt->execute($params);
+  $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $resultCount = count($filteredPeople);
+}
+?>
 
-  <!-- CSV Import Form -->
+
+<div style="margin: 24px 0 18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+  <form id="searchForm" method="get" action="list.php" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+    <input type="text" id="searchInput" name="search_value" placeholder="Search..." value="<?= htmlspecialchars($searchValue) ?>" style="padding:7px 12px;border:1px solid #bbb;border-radius:4px;min-width:180px;">
+    <select id="columnSelect" name="search_column" style="padding:7px 10px;border:1px solid #bbb;border-radius:4px;">
+      <option value="All" <?= $searchColumn === 'All' ? 'selected' : '' ?>>All</option>
+      <?php foreach ($filterOptions as $label => $col): ?>
+        <option value="<?= htmlspecialchars($label) ?>" <?= $searchColumn === $label ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+      <?php endforeach; ?>
+    </select>
+    <!-- Search button removed -->
+  </form>
+  <span id="resultCount" style="font-size:15px;color:#444;display:<?= $searchValue !== '' ? 'inline' : 'none' ?>;">
+    Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
+  </span>
+
+   <!-- CSV Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
       <p>Import Excel File to Database</p>
@@ -191,6 +261,50 @@ $conn->close();
       <input type="submit" value="Upload & Import">
     </form>
   </div>
+</div>
+
+<script>
+  // Focus search input and place cursor at end if it has value after reload
+  window.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim() !== '') {
+      searchInput.focus();
+      // Move cursor to end
+      var val = searchInput.value;
+      searchInput.value = '';
+      searchInput.value = val;
+    }
+  });
+</script>
+
+<?php
+// Overwrite $people for table rendering
+$people = $filteredPeople;
+?>
+
+<script>
+  // Auto-submit form on input/select change
+  const searchInput = document.getElementById('searchInput');
+  const columnSelect = document.getElementById('columnSelect');
+  const searchForm = document.getElementById('searchForm');
+  let typingTimer;
+  const doneTypingInterval = 350; // ms
+
+  function submitSearch() {
+    searchForm.submit();
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(submitSearch, doneTypingInterval);
+  });
+
+  columnSelect.addEventListener('change', function() {
+    submitSearch();
+  });
+</script>
+
+ 
 
 </div>
 
@@ -201,7 +315,11 @@ $conn->close();
     <thead>
       <tr>
         <?php foreach ($columns as $col): ?>
-          <th><?= htmlspecialchars($col) ?></th>
+                    <?php if ($col == 'employed_unemployed') :?>
+            <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
+            <?php else:?>
+              <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
+          <?php endif; ?>
         <?php endforeach; ?>
       </tr>
     </thead>
@@ -239,7 +357,7 @@ $conn->close();
           <td><?= htmlspecialchars(rtrim($person['facebook'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
-          <td><?= htmlspecialchars(rtrim($person['household_id'])) ?></td>
+          <td><?= htmlspecialchars($person['household_id']) ?></td>
         </tr>
       <?php endforeach; ?>
 
