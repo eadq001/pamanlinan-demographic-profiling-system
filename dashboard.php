@@ -36,11 +36,11 @@ $purokCounts = array_column($purokData, 'count');
     <ul class="nav-links" id="navLinks">
       <li><a href="add.php">ADD</a></li>
       <li><a href="list.php">LISTS</a></li>
-      <li><a href="index.php">LOGOUT</a></li>
+      <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
 </header>
-<main style="margin-left:50px;">
+<main style="margin-left:30px;">
 
 
     <!-- PUROK POPULATION -->

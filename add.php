@@ -213,6 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <nav class="navbar">
       <div class="logo">Demographic Profiling System form</div>
       <ul class="nav-links">
+        <li><a href="dashboard.php">DASHBOARD</a></li>               
         <li><a href="list.php">LIST</a></li>               
         <li><a href="logout.php">LOGOUT</a></li>
         
