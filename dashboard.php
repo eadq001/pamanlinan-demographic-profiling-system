@@ -193,6 +193,180 @@ $purokCounts = array_column($purokData, 'count');
             }
         });
     </script>
+
+    <?php
+    // Query to get toilet data per purok (count of 'Yes' and 'No' per purok)
+    $stmtToilets = $pdo->query("
+        SELECT purok_name,
+            SUM(CASE WHEN toilet = 'Yes' THEN 1 ELSE 0 END) AS yes_count,
+            SUM(CASE WHEN toilet = 'No' THEN 1 ELSE 0 END) AS no_count
+        FROM people
+        GROUP BY purok_name
+        ORDER BY purok_name
+    ");
+    $toiletData = $stmtToilets->fetchAll(PDO::FETCH_ASSOC);
+    $toiletPurokNames = array_column($toiletData, 'purok_name');
+    $toiletYesCounts = array_column($toiletData, 'yes_count');
+    $toiletNoCounts = array_column($toiletData, 'no_count');
+    ?>
+
+    <!-- TOILETS PER PUROK -->
+    <div class="container">
+        <h2 style="text-align:center;">Toilets per Purok</h2>
+        <canvas id="toiletChart" width="600" height="350"></canvas>
+        <div id="totalToilets" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
+            <?php
+            $totalYes = array_sum($toiletYesCounts);
+            $totalNo = array_sum($toiletNoCounts);
+            echo "Total with Toilet: $totalYes | Total without Toilet: $totalNo";
+            ?>
+        </div>
+    </div>
+
+    <script>
+        const toiletPurokNames = <?php echo json_encode($toiletPurokNames); ?>;
+        const toiletYesCounts = <?php echo json_encode($toiletYesCounts); ?>;
+        const toiletNoCounts = <?php echo json_encode($toiletNoCounts); ?>;
+        const toiletCtx = document.getElementById('toiletChart').getContext('2d');
+        new Chart(toiletCtx, {
+            type: 'bar',
+            data: {
+                labels: toiletPurokNames,
+                datasets: [
+                    {
+                        label: 'With Toilet (Yes)',
+                        data: toiletYesCounts,
+                        backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'Without Toilet (No)',
+                        data: toiletNoCounts,
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Purok Name'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Households'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
+
+    <?php
+    // Query to get gender count per purok
+    $stmtGenders = $pdo->query("
+        SELECT purok_name,
+            SUM(CASE WHEN sex_name = 'Male' THEN 1 ELSE 0 END) AS male_count,
+            SUM(CASE WHEN sex_name = 'Female' THEN 1 ELSE 0 END) AS female_count
+        FROM people
+        GROUP BY purok_name
+        ORDER BY purok_name
+    ");
+    $genderData = $stmtGenders->fetchAll(PDO::FETCH_ASSOC);
+    $genderPurokNames = array_column($genderData, 'purok_name');
+    $maleCounts = array_column($genderData, 'male_count');
+    $femaleCounts = array_column($genderData, 'female_count');
+    ?>
+
+    <!-- GENDERS PER PUROK -->
+    <div class="container">
+        <h2 style="text-align:center;">Genders</h2>
+        <canvas id="genderChart" width="600" height="350"></canvas>
+        <div id="totalGenders" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
+            <?php
+            $totalMales = array_sum($maleCounts);
+            $totalFemales = array_sum($femaleCounts);
+            echo "Total Males: $totalMales | Total Females: $totalFemales";
+            ?>
+        </div>
+    </div>
+
+    <script>
+        const genderPurokNames = <?php echo json_encode($genderPurokNames); ?>;
+        const maleCounts = <?php echo json_encode($maleCounts); ?>;
+        const femaleCounts = <?php echo json_encode($femaleCounts); ?>;
+        const genderCtx = document.getElementById('genderChart').getContext('2d');
+        new Chart(genderCtx, {
+            type: 'bar',
+            data: {
+                labels: genderPurokNames,
+                datasets: [
+                    {
+                        label: 'Male',
+                        data: maleCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'Female',
+                        data: femaleCounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Purok Name'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of People'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </main>
 </body>
 
