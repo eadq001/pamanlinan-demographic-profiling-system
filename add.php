@@ -297,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="grid">
       <div>
         <label>Street Name</label>
-        <input type="text" name="street_name" required />
+        <input type="text" name="street_name"  />
       </div>
       <div>
         <label>Purok Name</label>
@@ -313,7 +313,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div>
         <label>Contact No.</label>
-        <input type="tel" name="cellphone_no" required />
+        <input type="tel" name="cellphone_no"  />
       </div>
       <div>
         <label>Facebook Account</label>
@@ -345,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div>
         <label>Solo Parent</label>
-        <select name="solo_parent" required>
+        <select name="solo_parent" >
           <option value="">-- Select --</option>
           <option>N/A</option>
           <option>Yes</option>
@@ -360,7 +360,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           name="ofw"
           list="ofw-options"
           placeholder="Select or type if yes (Please Specify)"
-          required
+          
         />
       </div>
       <datalist id="ofw-options">
@@ -371,7 +371,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </datalist>
       <div>
         <label>Out-of-school Youth</label>
-        <select name="school_youth" required>
+        <select name="school_youth" >
           <option value="">-- Select --</option>
           <option>N/A</option>
           <option>Yes</option>
@@ -386,7 +386,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           name="pwd"
           list="pwd-options"
           placeholder="Select or type if yes (please specify)"
-          required
+          
         />
       </div>
       <datalist id="pwd-options">
