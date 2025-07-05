@@ -222,25 +222,26 @@ if (isset($filterOptions[$searchColumn])) {
     $ageWhere = '';
     switch ($ageGroupDilg) {
       case '0-11 months':
-        $ageWhere = "(age = 0 OR age = 1 OR age = 2 OR age = 3 OR age = 4 OR age = 5 OR age = 6 OR age = 7 OR age = 8 OR age = 9 OR age = 10 OR age = 11)";
+        // Only select rows where age contains 'months'
+        $ageWhere = "age LIKE '%months%'";
         break;
       case '1-2 years old':
-        $ageWhere = "(age = 1 OR age = 2)";
+        $ageWhere = "(age = 1 OR age = 2) AND age NOT LIKE '%months%'";
         break;
       case '3-5':
-        $ageWhere = "(age >= 3 AND age <= 5)";
+        $ageWhere = "(age >= 3 AND age <= 5) AND age NOT LIKE '%months%'";
         break;
       case '6-12':
-        $ageWhere = "(age >= 6 AND age <= 12)";
+        $ageWhere = "(age >= 6 AND age <= 12) AND age NOT LIKE '%months%'";
         break;
       case '13-17':
-        $ageWhere = "(age >= 13 AND age <= 17)";
+        $ageWhere = "(age >= 13 AND age <= 17) AND age NOT LIKE '%months%'";
         break;
       case '18-59':
-        $ageWhere = "(age >= 18 AND age <= 59)";
+        $ageWhere = "(age >= 18 AND age <= 59) AND age NOT LIKE '%months%'";
         break;
       case '60 and up':
-        $ageWhere = "(age >= 60)";
+        $ageWhere = "(age >= 60) AND age NOT LIKE '%months%'";
         break;
     }
     if ($ageWhere) {
@@ -302,11 +303,11 @@ if (isset($filterOptions[$searchColumn])) {
       <option value="">Select Age Group</option>
       <option value="0-11 months" <?= $ageGroupDilg === '0-11 months' ? 'selected' : '' ?>>0-11 months</option>
       <option value="1-2 years old" <?= $ageGroupDilg === '1-2 years old' ? 'selected' : '' ?>>1-2 years old</option>
-      <option value="3-5" <?= $ageGroupDilg === '3-5' ? 'selected' : '' ?>>3-5</option>
-      <option value="6-12" <?= $ageGroupDilg === '6-12' ? 'selected' : '' ?>>6-12</option>
-      <option value="13-17" <?= $ageGroupDilg === '13-17' ? 'selected' : '' ?>>13-17</option>
-      <option value="18-59" <?= $ageGroupDilg === '18-59' ? 'selected' : '' ?>>18-59</option>
-      <option value="60 and up" <?= $ageGroupDilg === '60 and up' ? 'selected' : '' ?>>60 and up</option>
+      <option value="3-5 " <?= $ageGroupDilg === '3-5' ? 'selected' : '' ?>>3-5 years old</option>
+      <option value="6-12" <?= $ageGroupDilg === '6-12' ? 'selected' : '' ?>>6-12 years old</option>
+      <option value="13-17" <?= $ageGroupDilg === '13-17' ? 'selected' : '' ?>>13-17 years old</option>
+      <option value="18-59" <?= $ageGroupDilg === '18-59' ? 'selected' : '' ?>>18-59 years old</option>
+      <option value="60 and up" <?= $ageGroupDilg === '60 and up' ? 'selected' : '' ?>>60 years old and up</option>
     </select>
     <!-- Search button removed -->
   </form>
