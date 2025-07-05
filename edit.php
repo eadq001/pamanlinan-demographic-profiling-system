@@ -132,7 +132,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
     <div class="grid">
       <div>
         <label>Street Name</label>
-        <input type="text" name="street_name" required value="<?php echo htmlspecialchars($person['street_name'] ?? ''); ?>" />
+        <input type="text" name="street_name"  value="<?php echo htmlspecialchars($person['street_name'] ?? ''); ?>" />
       </div>
       <div>
         <!-- purok -->
@@ -150,7 +150,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </div>
       <div>
         <label>Contact No.</label>
-        <input type="tel" name="cellphone_no" required value="<?php echo htmlspecialchars($person['cellphone_no'] ?? ''); ?>" />
+        <input type="tel" name="cellphone_no"  value="<?php echo htmlspecialchars($person['cellphone_no'] ?? ''); ?>" />
       </div>
       <div>
         <label>Facebook Account</label>
@@ -183,7 +183,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </div>
       <div>
         <label>Solo Parent</label>
-        <select name="solo_parent" required>
+        <select name="solo_parent" >
           <option value="">-- Select --</option>
           <?php
           $opts = ['N/A','Yes','No','Other'];
@@ -201,7 +201,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
           name="ofw"
           list="ofw-options"
           placeholder="Select or type if yes (Please Specify)"
-          required
+          
           value="<?php echo htmlspecialchars($person['ofw'] ?? ''); ?>"
         />
       </div>
@@ -213,7 +213,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </datalist>
       <div>
         <label>Out-of-school Youth</label>
-        <select name="school_youth" required>
+        <select name="school_youth" >
           <option value="">-- Select --</option>
           <?php
           foreach($opts as $opt) {

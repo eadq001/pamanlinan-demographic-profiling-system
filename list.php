@@ -201,11 +201,15 @@ $filterOptions = [
   "Facebook" => "facebook",
   "Valid ID" => "valid_id",
   "ID Type" => "type_id",
-  "Household ID" => "household_id"
+  "Household ID" => "household_id",
+  // Add Age Group DILG filter
+  "Age Group DILG" => "age_group_dilg"
 ];
 
 $searchValue = isset($_GET['search_value']) ? trim($_GET['search_value']) : '';
 $searchColumn = isset($_GET['search_column']) ? $_GET['search_column'] : '';
+// Add: get age group value if set
+$ageGroupDilg = isset($_GET['age_group_dilg_value']) ? $_GET['age_group_dilg_value'] : '';
 $totalCount = $pdo->query("SELECT COUNT(*) FROM people")->fetchColumn();
 
 $filteredPeople = $people;
@@ -213,19 +217,55 @@ $resultCount = count($people);
 
 if (isset($filterOptions[$searchColumn])) {
   $filter = $filterOptions[$searchColumn];
-  if (strpos($filter, ':') !== false) {
+  if ($filter === 'age_group_dilg' && $ageGroupDilg !== '') {
+    // Age group filter logic
+    $ageWhere = '';
+    switch ($ageGroupDilg) {
+      case '0-11 months':
+        $ageWhere = "(age = 0 OR age = 1 OR age = 2 OR age = 3 OR age = 4 OR age = 5 OR age = 6 OR age = 7 OR age = 8 OR age = 9 OR age = 10 OR age = 11)";
+        break;
+      case '1-2 years old':
+        $ageWhere = "(age = 1 OR age = 2)";
+        break;
+      case '3-5':
+        $ageWhere = "(age >= 3 AND age <= 5)";
+        break;
+      case '6-12':
+        $ageWhere = "(age >= 6 AND age <= 12)";
+        break;
+      case '13-17':
+        $ageWhere = "(age >= 13 AND age <= 17)";
+        break;
+      case '18-59':
+        $ageWhere = "(age >= 18 AND age <= 59)";
+        break;
+      case '60 and up':
+        $ageWhere = "(age >= 60)";
+        break;
+    }
+    if ($ageWhere) {
+      $stmt = $pdo->prepare("SELECT * FROM people WHERE $ageWhere");
+      $stmt->execute();
+      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $resultCount = count($filteredPeople);
+    }
+  } else if (strpos($filter, ':') !== false) {
     // For Employed/Unemployed exact match, ignore search value
     list($col, $val) = explode(':', $filter, 2);
     $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
     $stmt->execute([$val]);
-  } elseif ($searchValue !== '') {
+    if (isset($stmt)) {
+      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $resultCount = count($filteredPeople);
+    }
+  } else if ($searchValue !== '') {
     $col = $filter;
     $stmt = $pdo->prepare("SELECT * FROM people WHERE $col LIKE ?");
     $stmt->execute(['%' . $searchValue . '%']);
-  }
-  if (isset($stmt)) {
-    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $resultCount = count($filteredPeople);
+    if (isset($stmt)) {
+      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $resultCount = count($filteredPeople);
+    }
   }
 } elseif ($searchValue !== '' && $searchColumn === 'All') {
   // Search all columns
@@ -235,6 +275,8 @@ if (isset($filterOptions[$searchColumn])) {
     if (strpos($col, ':') !== false) {
       $col = explode(':', $col, 2)[0];
     }
+    // Skip pseudo-columns like Age Group DILG
+    if ($col === 'age_group_dilg') continue;
     $where[] = "$col LIKE ?";
     $params[] = '%' . $searchValue . '%';
   }
@@ -254,6 +296,17 @@ if (isset($filterOptions[$searchColumn])) {
       <?php foreach ($filterOptions as $label => $col): ?>
         <option value="<?= htmlspecialchars($label) ?>" <?= $searchColumn === $label ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
       <?php endforeach; ?>
+    </select>
+    <!-- Age Group DILG secondary filter -->
+    <select id="ageGroupDilgSelect" name="age_group_dilg_value" style="padding:7px 10px;border:1px solid #bbb;border-radius:4px;display:none;">
+      <option value="">Select Age Group</option>
+      <option value="0-11 months" <?= $ageGroupDilg === '0-11 months' ? 'selected' : '' ?>>0-11 months</option>
+      <option value="1-2 years old" <?= $ageGroupDilg === '1-2 years old' ? 'selected' : '' ?>>1-2 years old</option>
+      <option value="3-5" <?= $ageGroupDilg === '3-5' ? 'selected' : '' ?>>3-5</option>
+      <option value="6-12" <?= $ageGroupDilg === '6-12' ? 'selected' : '' ?>>6-12</option>
+      <option value="13-17" <?= $ageGroupDilg === '13-17' ? 'selected' : '' ?>>13-17</option>
+      <option value="18-59" <?= $ageGroupDilg === '18-59' ? 'selected' : '' ?>>18-59</option>
+      <option value="60 and up" <?= $ageGroupDilg === '60 and up' ? 'selected' : '' ?>>60 and up</option>
     </select>
     <!-- Search button removed -->
   </form>
@@ -295,6 +348,7 @@ $people = $filteredPeople;
   const searchInput = document.getElementById('searchInput');
   const columnSelect = document.getElementById('columnSelect');
   const searchForm = document.getElementById('searchForm');
+  const ageGroupDilgSelect = document.getElementById('ageGroupDilgSelect');
   let typingTimer;
   const doneTypingInterval = 350; // ms
 
@@ -308,8 +362,24 @@ $people = $filteredPeople;
   });
 
   columnSelect.addEventListener('change', function() {
+    toggleAgeGroupDilg();
     submitSearch();
   });
+  ageGroupDilgSelect.addEventListener('change', function() {
+    submitSearch();
+  });
+
+  function toggleAgeGroupDilg() {
+    if (columnSelect.value === 'Age Group DILG') {
+      ageGroupDilgSelect.style.display = '';
+      searchInput.style.display = 'none';
+    } else {
+      ageGroupDilgSelect.style.display = 'none';
+      searchInput.style.display = '';
+    }
+  }
+  // On page load
+  toggleAgeGroupDilg();
 </script>
 
  
