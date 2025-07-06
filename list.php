@@ -206,7 +206,9 @@ $filterOptions = [
   // Add Age Group DILG filter
   "Age Group DILG" => "age_group_dilg",
   // Add Age Group DISASTER filter
-  "Age Group DISASTER" => "age_group_disaster"
+  "Age Group DISASTER" => "age_group_disaster",
+  "Womens Association" => "womens_association",
+  "Senior Citizen" => "senior_citizen_filter"
 ];
 
 $searchValue = isset($_GET['search_value']) ? trim($_GET['search_value']) : '';
@@ -221,7 +223,19 @@ $resultCount = count($people);
 
 if (isset($filterOptions[$searchColumn])) {
   $filter = $filterOptions[$searchColumn];
-  if ($filter === 'age_group_dilg' && $ageGroupDilg !== '') {
+  if ($filter === 'womens_association') {
+    // Show only rows where womens_association is 'yes'
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE womens_association = 'yes'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'senior_citizen_filter') {
+    // Show only rows where age is 60 or above (exclude months)
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE (age >= 60 AND age NOT LIKE '%months%')");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'age_group_dilg' && $ageGroupDilg !== '') {
     // Age group filter logic
     $ageWhere = '';
     switch ($ageGroupDilg) {
