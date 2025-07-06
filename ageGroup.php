@@ -54,6 +54,8 @@ $results[] = [
 <head>
     <meta charset="UTF-8">
   <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+    <link rel="stylesheet" href="add.css" />
+    <link rel="stylesheet" href="add2.css" />
     <title>Age Group Summary</title>
     <style>
         table { border-collapse: collapse; width: 60%; margin: 40px auto; background: #fff; }
@@ -63,45 +65,17 @@ $results[] = [
         td, th { font-size: 16px; }
         caption { font-size: 22px; margin-bottom: 12px; font-weight: bold; color: #000; }
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        header {
-  background: #034f53;
-  color: rgb(255, 255, 255);
-  padding: 20px;
-  margin: -8px -8px;
-}
+        #ageGroupTable {
+            margin-top: 100px;
+        }
+       
+        .btn:hover {
+            background-color:rgb(24, 174, 182) !important;
+        }
 
-.logo {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
 
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-  margin: 0;
-  padding: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
 
-.nav-links a {
-  text-decoration: none;
-  color: rgb(255, 255, 255);
-  font-weight: bold;
-}
-
-.nav-links a:hover {
-  color: #ffd700;
-}
     </style>
 </head>
 <body>
@@ -207,8 +181,8 @@ nav {
             <?php endforeach; ?>
         </tbody>
     </table>
-    <div style="text-align:center;margin-top:18px;">
-        <button onclick="printTables()" style="padding:10px 22px;font-size:16px;background:#6ca0a3;color:#fff;border:none;border-radius:5px;cursor:pointer;">Print</button>
+    <div style="text-align:center;margin-top:-18px;margin-bottom:12px;">
+        <button onclick="printTables()" class="btn" style="padding:10px 22px;font-size:16px;background:#6ca0a3;color:#fff;border:none;border-radius:5px;cursor:pointer;">Print</button>
     </div>
     <script>
     function printTables() {
