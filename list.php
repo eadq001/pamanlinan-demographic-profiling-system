@@ -60,7 +60,7 @@ $columns = [
     'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
     'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
     'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id'
+    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name'])) {
@@ -550,6 +550,8 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
           <td><?= htmlspecialchars($person['household_id']) ?></td>
+          <td><?= htmlspecialchars($person['womens_association']) ?></td>
+          <td><?= htmlspecialchars($person['senior_citizen']) ?></td>
         </tr>
       <?php endforeach; ?>
 

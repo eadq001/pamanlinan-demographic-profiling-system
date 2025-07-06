@@ -424,6 +424,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <option>No</option>
         </select>
       </div>
+       <div>
+        <label>Women's Association Member</label>
+        <select name="womens_association" >
+          <option value="">-- Select --</option>
+          <option>N/A</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
     </div>
 
     <h2>Identification</h2>
