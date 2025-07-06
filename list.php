@@ -551,7 +551,31 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
           <td><?= htmlspecialchars($person['household_id']) ?></td>
           <td><?= htmlspecialchars($person['womens_association']) ?></td>
-          <td><?= htmlspecialchars($person['senior_citizen']) ?></td>
+            <?php
+            // Determine if person is a senior citizen (age 60 and above)
+            $isSenior = false;
+            if (is_numeric($person['age']) && intval($person['age']) >= 60) {
+              $isSenior = true;
+            } elseif (is_string($person['age']) && preg_match('/^\d+$/', $person['age']) && intval($person['age']) >= 60) {
+              $isSenior = true;
+            }
+
+            $seniorValue = $isSenior ? 'Yes' : 'No';
+
+            // Update the database if value is different
+            if ($person['senior_citizen'] !== $seniorValue) {
+              $updateSenior = $pdo->prepare("UPDATE people SET senior_citizen = ? WHERE last_name = ? AND first_name = ? AND middle_name = ?");
+              $updateSenior->execute([
+                $seniorValue,
+                $person['last_name'],
+                $person['first_name'],
+                $person['middle_name']
+              ]);
+              // Update local array for display
+              $person['senior_citizen'] = $seniorValue;
+            }
+            ?>
+            <td><?= htmlspecialchars($person['senior_citizen']) ?></td>
         </tr>
       <?php endforeach; ?>
 
