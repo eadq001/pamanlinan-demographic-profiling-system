@@ -270,6 +270,15 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
           <option value="No" <?php if(strtolower(trim($person['toilet'] ?? ''))=='no') echo 'selected'; ?>>No</option>
         </select>
       </div>
+      <div>
+        <label>Women's Association</label>
+        <select name="womens_association" required>
+          <option value="">-- Select --</option>
+          <option value="N/A" <?php if(strtolower(trim($person['womens_association'] ?? ''))=='n/a') echo 'selected'; ?>>N/A</option>
+          <option value="Yes" <?php if(strtolower(trim($person['womens_association'] ?? ''))=='yes') echo 'selected'; ?>>Yes</option>
+          <option value="No" <?php if(strtolower(trim($person['womens_association'] ?? ''))=='no') echo 'selected'; ?>>No</option>
+        </select>
+      </div>
     </div>
 
     <h2>Identification</h2>

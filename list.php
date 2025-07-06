@@ -60,7 +60,7 @@ $columns = [
     'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
     'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
     'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id'
+    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name'])) {
@@ -204,13 +204,16 @@ $filterOptions = [
   "ID Type" => "type_id",
   "Household ID" => "household_id",
   // Add Age Group DILG filter
-  "Age Group DILG" => "age_group_dilg"
+  "Age Group DILG" => "age_group_dilg",
+  // Add Age Group DISASTER filter
+  "Age Group DISASTER" => "age_group_disaster"
 ];
 
 $searchValue = isset($_GET['search_value']) ? trim($_GET['search_value']) : '';
 $searchColumn = isset($_GET['search_column']) ? $_GET['search_column'] : '';
 // Add: get age group value if set
 $ageGroupDilg = isset($_GET['age_group_dilg_value']) ? $_GET['age_group_dilg_value'] : '';
+$ageGroupDisaster = isset($_GET['age_group_disaster_value']) ? $_GET['age_group_disaster_value'] : '';
 $totalCount = $pdo->query("SELECT COUNT(*) FROM people")->fetchColumn();
 
 $filteredPeople = $people;
@@ -251,6 +254,38 @@ if (isset($filterOptions[$searchColumn])) {
       $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
       $resultCount = count($filteredPeople);
     }
+  } else if ($filter === 'age_group_disaster' && $ageGroupDisaster !== '') {
+    // Age group DISASTER filter logic
+    $ageWhere = '';
+    switch ($ageGroupDisaster) {
+      case 'Children 0-5 years old':
+        $ageWhere = "(age LIKE '%months%' OR (age >= 0 AND age <= 5 AND age NOT LIKE '%months%'))";
+        break;
+      case 'Children 6-12 years old':
+        $ageWhere = "(age >= 6 AND age <= 12) AND age NOT LIKE '%months%'";
+        break;
+      case 'Children 13-17 years old':
+        $ageWhere = "(age >= 13 AND age <= 17) AND age NOT LIKE '%months%'";
+        break;
+      case 'Adult 18-35 years old':
+        $ageWhere = "(age >= 18 AND age <= 35) AND age NOT LIKE '%months%'";
+        break;
+      case 'Adult 36-50 years old':
+        $ageWhere = "(age >= 36 AND age <= 50) AND age NOT LIKE '%months%'";
+        break;
+      case 'Adult 51-65 years old':
+        $ageWhere = "(age >= 51 AND age <= 65) AND age NOT LIKE '%months%'";
+        break;
+      case 'Adult 66 years old and above':
+        $ageWhere = "(age >= 66) AND age NOT LIKE '%months%'";
+        break;
+    }
+    if ($ageWhere) {
+      $stmt = $pdo->prepare("SELECT * FROM people WHERE $ageWhere");
+      $stmt->execute();
+      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $resultCount = count($filteredPeople);
+    }
   } else if (strpos($filter, ':') !== false) {
     // For Employed/Unemployed exact match, ignore search value
     list($col, $val) = explode(':', $filter, 2);
@@ -277,8 +312,8 @@ if (isset($filterOptions[$searchColumn])) {
     if (strpos($col, ':') !== false) {
       $col = explode(':', $col, 2)[0];
     }
-    // Skip pseudo-columns like Age Group DILG
-    if ($col === 'age_group_dilg') continue;
+    // Skip pseudo-columns like Age Group DILG and Age Group DISASTER
+    if ($col === 'age_group_dilg' || $col === 'age_group_disaster') continue;
     $where[] = "$col LIKE ?";
     $params[] = '%' . $searchValue . '%';
   }
@@ -309,6 +344,17 @@ if (isset($filterOptions[$searchColumn])) {
       <option value="13-17" <?= $ageGroupDilg === '13-17' ? 'selected' : '' ?>>13-17</option>
       <option value="18-59" <?= $ageGroupDilg === '18-59' ? 'selected' : '' ?>>18-59</option>
       <option value="60 and up" <?= $ageGroupDilg === '60 and up' ? 'selected' : '' ?>>60 and up</option>
+    </select>
+    <!-- Age Group DISASTER secondary filter -->
+    <select id="ageGroupDisasterSelect" name="age_group_disaster_value" style="padding:7px 10px;border:1px solid #bbb;border-radius:4px;display:none;">
+      <option value="">Select Age Group</option>
+      <option value="Children 0-5 years old" <?= $ageGroupDisaster === 'Children 0-5 years old' ? 'selected' : '' ?>>Children 0-5 years old</option>
+      <option value="Children 6-12 years old" <?= $ageGroupDisaster === 'Children 6-12 years old' ? 'selected' : '' ?>>Children 6-12 years old</option>
+      <option value="Children 13-17 years old" <?= $ageGroupDisaster === 'Children 13-17 years old' ? 'selected' : '' ?>>Children 13-17 years old</option>
+      <option value="Adult 18-35 years old" <?= $ageGroupDisaster === 'Adult 18-35 years old' ? 'selected' : '' ?>>Adult 18-35 years old</option>
+      <option value="Adult 36-50 years old" <?= $ageGroupDisaster === 'Adult 36-50 years old' ? 'selected' : '' ?>>Adult 36-50 years old</option>
+      <option value="Adult 51-65 years old" <?= $ageGroupDisaster === 'Adult 51-65 years old' ? 'selected' : '' ?>>Adult 51-65 years old</option>
+      <option value="Adult 66 years old and above" <?= $ageGroupDisaster === 'Adult 66 years old and above' ? 'selected' : '' ?>>Adult 66 years old and above</option>
     </select>
     <!-- Search button removed -->
   </form>
@@ -351,6 +397,7 @@ $people = $filteredPeople;
   const columnSelect = document.getElementById('columnSelect');
   const searchForm = document.getElementById('searchForm');
   const ageGroupDilgSelect = document.getElementById('ageGroupDilgSelect');
+  const ageGroupDisasterSelect = document.getElementById('ageGroupDisasterSelect');
   let typingTimer;
   const doneTypingInterval = 350; // ms
 
@@ -366,6 +413,16 @@ $people = $filteredPeople;
   columnSelect.addEventListener('change', function() {
     if (columnSelect.value === 'Age Group DILG') {
       searchInput.value = '';
+      ageGroupDilgSelect.style.display = '';
+      ageGroupDisasterSelect.style.display = 'none';
+    } else if (columnSelect.value === 'Age Group DISASTER') {
+      searchInput.value = '';
+      ageGroupDilgSelect.style.display = 'none';
+      ageGroupDisasterSelect.style.display = '';
+    } else {
+      ageGroupDilgSelect.style.display = 'none';
+      ageGroupDisasterSelect.style.display = 'none';
+      searchInput.style.display = '';
     }
     toggleAgeGroupDilg();
     submitSearch();
@@ -373,18 +430,27 @@ $people = $filteredPeople;
   ageGroupDilgSelect.addEventListener('change', function() {
     submitSearch();
   });
-
+  ageGroupDisasterSelect.addEventListener('change', function() {
+    submitSearch();
+  });
   function toggleAgeGroupDilg() {
     if (columnSelect.value === 'Age Group DILG') {
       ageGroupDilgSelect.style.display = '';
+      ageGroupDisasterSelect.style.display = 'none';
+      searchInput.style.display = 'none';
+    } else if (columnSelect.value === 'Age Group DISASTER') {
+      ageGroupDilgSelect.style.display = 'none';
+      ageGroupDisasterSelect.style.display = '';
       searchInput.style.display = 'none';
     } else {
       ageGroupDilgSelect.style.display = 'none';
+      ageGroupDisasterSelect.style.display = 'none';
       searchInput.style.display = '';
     }
   }
   // On page load
   toggleAgeGroupDilg();
+  toggleAgeGroupDisaster();
 </script>
 
  
@@ -484,6 +550,32 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
           <td><?= htmlspecialchars($person['household_id']) ?></td>
+          <td><?= htmlspecialchars($person['womens_association']) ?></td>
+            <?php
+            // Determine if person is a senior citizen (age 60 and above)
+            $isSenior = false;
+            if (is_numeric($person['age']) && intval($person['age']) >= 60) {
+              $isSenior = true;
+            } elseif (is_string($person['age']) && preg_match('/^\d+$/', $person['age']) && intval($person['age']) >= 60) {
+              $isSenior = true;
+            }
+
+            $seniorValue = $isSenior ? 'Yes' : 'No';
+
+            // Update the database if value is different
+            if ($person['senior_citizen'] !== $seniorValue) {
+              $updateSenior = $pdo->prepare("UPDATE people SET senior_citizen = ? WHERE last_name = ? AND first_name = ? AND middle_name = ?");
+              $updateSenior->execute([
+                $seniorValue,
+                $person['last_name'],
+                $person['first_name'],
+                $person['middle_name']
+              ]);
+              // Update local array for display
+              $person['senior_citizen'] = $seniorValue;
+            }
+            ?>
+            <td><?= htmlspecialchars($person['senior_citizen']) ?></td>
         </tr>
       <?php endforeach; ?>
 

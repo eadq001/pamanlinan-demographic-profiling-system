@@ -12,7 +12,7 @@ $conn = new mysqli("localhost", "root", "", "pamanlinan_db");
 $fields = [
     'last_name', 'first_name', 'middle_name', 'ext_name', 'sex_name', 'date_of_birth', 'age', 'civil_status',
     'place_of_birth', 'street_name', 'purok_name', 'cellphone_no', 'facebook', 'employed_unemployed', 'occupation',
-    'solo_parent', 'ofw', 'school_youth', 'pwd', 'indigenous', 'citizenship', 'toilet', 'valid_id', 'type_id', 'household_id'
+    'solo_parent', 'ofw', 'school_youth', 'pwd', 'indigenous', 'citizenship', 'toilet', 'valid_id', 'type_id', 'household_id', 'womens_association'
 ];
 
 $data = [];
@@ -39,14 +39,14 @@ if ($row) {
     $sql = "UPDATE people SET 
         last_name=?, first_name=?, middle_name=?, ext_name=?, sex_name=?, date_of_birth=?, age=?, civil_status=?, place_of_birth=?, 
         street_name=?, purok_name=?, cellphone_no=?, facebook=?, employed_unemployed=?, occupation=?, solo_parent=?, ofw=?, 
-        school_youth=?, pwd=?, indigenous=?, citizenship=?, toilet=?, valid_id=?, type_id=?, household_id = ? 
+        school_youth=?, pwd=?, indigenous=?, citizenship=?, toilet=?, valid_id=?, type_id=?, household_id = ?, womens_association = ?
         WHERE id=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
-        "sssssssssssssssssssssssssi",
+        "ssssssssssssssssssssssssssi",
         $data['last_name'], $data['first_name'], $data['middle_name'], $data['ext_name'], $data['sex_name'], $data['date_of_birth'], $data['age'], $data['civil_status'],
         $data['place_of_birth'], $data['street_name'], $data['purok_name'], $data['cellphone_no'], $data['facebook'], $data['employed_unemployed'], $data['occupation'],
-        $data['solo_parent'], $data['ofw'], $data['school_youth'], $data['pwd'], $data['indigenous'], $data['citizenship'], $data['toilet'], $data['valid_id'], $data['type_id'],$data['household_id'],
+        $data['solo_parent'], $data['ofw'], $data['school_youth'], $data['pwd'], $data['indigenous'], $data['citizenship'], $data['toilet'], $data['valid_id'], $data['type_id'],$data['household_id'],$data['womens_association'],
         $id
     );
     if ($stmt->execute()) {

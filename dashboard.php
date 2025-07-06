@@ -368,6 +368,78 @@ $purokCounts = array_column($purokData, 'count');
             }
         });
     </script>
+
+    <?php
+    // Query to get out-of-school youth count per purok
+    $stmtOSY = $pdo->query("
+        SELECT purok_name, COUNT(*) as osy_count
+        FROM people
+        WHERE school_youth = 'Yes'
+        GROUP BY purok_name
+        ORDER BY purok_name
+    ");
+    $osyData = $stmtOSY->fetchAll(PDO::FETCH_ASSOC);
+    $osyPurokNames = array_column($osyData, 'purok_name');
+    $osyCounts = array_column($osyData, 'osy_count');
+    ?>
+
+    <!-- OUT-OF-SCHOOL YOUTH PER PUROK -->
+    <div class="container">
+        <h2 style="text-align:center;">Out-of-School Youth per Purok</h2>
+        <canvas id="osyChart" width="600" height="350"></canvas>
+        <div id="totalOSY" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
+            <?php
+            $totalOSY = array_sum($osyCounts);
+            echo "Total Out-of-School Youth: $totalOSY";
+            ?>
+        </div>
+    </div>
+
+    <script>
+        const osyPurokNames = <?php echo json_encode($osyPurokNames); ?>;
+        const osyCounts = <?php echo json_encode($osyCounts); ?>;
+        const osyCtx = document.getElementById('osyChart').getContext('2d');
+        new Chart(osyCtx, {
+            type: 'bar',
+            data: {
+                labels: osyPurokNames,
+                datasets: [{
+                    label: 'Out-of-School Youth',
+                    data: osyCounts,
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Purok Name'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Out-of-School Youth'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </main>
 </body>
 
