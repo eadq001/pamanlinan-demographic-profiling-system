@@ -35,7 +35,6 @@ body {
   .nav-links {
     list-style: none;
     display: flex;
-    gap: 1rem;
   }
   .nav-links a {
     color: white;

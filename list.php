@@ -165,6 +165,7 @@ $conn->close();
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="dashboard.php">DASHBOARD</a></li>
+      <li><a href="deceased.php">DECEASED</a></li>
       <li><a href="ageGroup.php">AGE GROUP</a></li>
       <li><a href="add.php">ADD</a></li>
       <li><a href="index.php">LOGOUT</a></li>
@@ -326,8 +327,8 @@ if (isset($filterOptions[$searchColumn])) {
     if (strpos($col, ':') !== false) {
       $col = explode(':', $col, 2)[0];
     }
-    // Skip pseudo-columns like Age Group DILG and Age Group DISASTER
-    if ($col === 'age_group_dilg' || $col === 'age_group_disaster') continue;
+    // Skip pseudo-columns like Age Group DILG and Age Group DISASTER, and senior citizen
+    if ($col === 'age_group_dilg' || $col === 'age_group_disaster' || $col === 'senior_citizen_filter') continue;
     $where[] = "$col LIKE ?";
     $params[] = '%' . $searchValue . '%';
   }
@@ -501,16 +502,13 @@ $people = $filteredPeople;
           if (!$dob || $dob == '0000-00-00') return '';
           $birthDate = new DateTime($dob);
           $today = new DateTime();
-
-          $years = $today->diff($birthDate)->y;
-          $months = $today->diff($birthDate)->m;
-
+          $interval = $today->diff($birthDate);
+          $years = $interval->y;
+          $months = $interval->m + ($interval->y * 12);
           // If less than 1 year old, show in months
           if ($years < 1) {
-        $totalMonths = $today->diff($birthDate)->m + ($today->diff($birthDate)->y * 12);
-        // If less than 1 month, show as "0 months"
-        if ($totalMonths < 1) $totalMonths = 0;
-        return $totalMonths . ' months';
+            if ($interval->m < 1 && $interval->d < 1) $months = 0;
+            return $months . ' months';
           }
           return $years;
         }
@@ -528,15 +526,9 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['place_of_birth'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['date_of_birth'])) ?></td>
           <?php
-          // Check and update age if incorrect
+          // Always recalculate age and update DB if needed
           $calculatedAge = calculateAge($person['date_of_birth']);
-          if (
-            is_numeric($person['age']) &&
-            $person['age'] !== '' &&
-            $calculatedAge !== '' &&
-            intval($person['age']) !== intval($calculatedAge)
-          ) {
-            // Update the age in the database if it's wrong
+          if ($person['age'] !== $calculatedAge && $calculatedAge !== '') {
             $updateStmt = $pdo->prepare("UPDATE people SET age = ? WHERE last_name = ? AND first_name = ? AND middle_name = ?");
             $updateStmt->execute([
               $calculatedAge,
@@ -544,7 +536,6 @@ $people = $filteredPeople;
               $person['first_name'],
               $person['middle_name']
             ]);
-            // Also update the local array so the display is correct
             $person['age'] = $calculatedAge;
           }
           ?>

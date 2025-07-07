@@ -73,6 +73,12 @@ $results[] = [
             background-color:rgb(24, 174, 182) !important;
         }
 
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
 
 
 

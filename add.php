@@ -96,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <title>Brgy. Pamanlinan | Add Person</title>
   <link rel="stylesheet" href="font.css" />
   <link rel="stylesheet" href="add.css" />
+  <link rel="stylesheet" href="nav.css">
   <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
   <style>
     body {
