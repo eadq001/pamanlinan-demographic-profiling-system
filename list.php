@@ -168,13 +168,14 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         $sheet->getStyle($colLetter . '1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $colIndex++;
     }
-    // Set data (all center, 12px)
+    // Set data (all center, 12px, and uppercase)
     $rowIndex = 2;
     foreach ($filteredPeople as $person) {
         $colIndex = 1;
         foreach ($columns as $col) {
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
-            $sheet->setCellValue($colLetter . $rowIndex, $person[$col] ?? '');
+            $cellValue = isset($person[$col]) ? strtoupper($person[$col]) : '';
+            $sheet->setCellValue($colLetter . $rowIndex, $cellValue);
             $sheet->getStyle($colLetter . $rowIndex)->getFont()->setSize(12);
             $sheet->getStyle($colLetter . $rowIndex)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $colIndex++;
