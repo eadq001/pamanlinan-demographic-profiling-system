@@ -1,4 +1,161 @@
 <?php
+// Move this block to the very top of the file, before any HTML, whitespace, or echo output
+if (isset($_GET['export']) && $_GET['export'] == '1') {
+    require 'vendor/autoload.php';
+    $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
+    $columns = [
+        'last_name', 'first_name', 'middle_name', 'ext_name', 'sex_name',
+        'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
+        'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
+        'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
+        'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+    ];
+    $filterOptions = [
+      "Last Name" => "last_name",
+      "First Name" => "first_name",
+      "Middle Name" => "middle_name",
+      "Ext" => "ext_name",
+      "Sex" => "sex_name",
+      "Street" => "street_name",
+      "Purok Name" => "purok_name",
+      "Place of Birth" => "place_of_birth",
+      "Birth Date" => "date_of_birth",
+      "Age" => "age",
+      "Civil Status" => "civil_status",
+      "Citizenship" => "citizenship",
+      "Employed" => "employed_unemployed:Employed",
+      "Unemployed" => "employed_unemployed:Unemployed",
+      "Solo Parent" => "solo_parent",
+      "OFW" => "ofw",
+      "Occupation" => "occupation",
+      "Toilet" => "toilet",
+      "School Youth" => "school_youth",
+      "PWD" => "pwd",
+      "Indigenous" => "indigenous",
+      "Contact no." => "cellphone_no",
+      "Facebook" => "facebook",
+      "Valid ID" => "valid_id",
+      "ID Type" => "type_id",
+      "Household ID" => "household_id",
+      "Age Group DILG" => "age_group_dilg",
+      "Age Group DISASTER" => "age_group_disaster",
+      "Womens Association" => "womens_association",
+      "Senior Citizen" => "senior_citizen_filter"
+    ];
+    // Fetch all people for export if not filtered
+    $stmt = $pdo->query("SELECT * FROM people");
+    $people = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Re-run the filter logic to get $filteredPeople for export
+    $searchValue = isset($_GET['search_value']) ? trim($_GET['search_value']) : '';
+    $searchColumn = isset($_GET['search_column']) ? $_GET['search_column'] : '';
+    $ageGroupDilg = isset($_GET['age_group_dilg_value']) ? $_GET['age_group_dilg_value'] : '';
+    $ageGroupDisaster = isset($_GET['age_group_disaster_value']) ? $_GET['age_group_disaster_value'] : '';
+    $filteredPeople = $people;
+    if (isset($filterOptions[$searchColumn])) {
+      $filter = $filterOptions[$searchColumn];
+      if ($filter === 'womens_association') {
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE womens_association = 'yes'");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } else if ($filter === 'senior_citizen_filter') {
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE (age >= 60 AND age NOT LIKE '%months%')");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } else if ($filter === 'age_group_dilg' && $ageGroupDilg !== '') {
+        $ageWhere = '';
+        switch ($ageGroupDilg) {
+          case '0-11 months': $ageWhere = "age LIKE '%months%'"; break;
+          case '1-2 years old': $ageWhere = "(age = 1 OR age = 2) AND age NOT LIKE '%months%'"; break;
+          case '3-5': $ageWhere = "(age >= 3 AND age <= 5) AND age NOT LIKE '%months%'"; break;
+          case '6-12': $ageWhere = "(age >= 6 AND age <= 12) AND age NOT LIKE '%months%'"; break;
+          case '13-17': $ageWhere = "(age >= 13 AND age <= 17) AND age NOT LIKE '%months%'"; break;
+          case '18-59': $ageWhere = "(age >= 18 AND age <= 59) AND age NOT LIKE '%months%'"; break;
+          case '60 and up': $ageWhere = "(age >= 60) AND age NOT LIKE '%months%'"; break;
+        }
+        if ($ageWhere) {
+          $stmt = $pdo->prepare("SELECT * FROM people WHERE $ageWhere");
+          $stmt->execute();
+          $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+      } else if ($filter === 'age_group_disaster' && $ageGroupDisaster !== '') {
+        $ageWhere = '';
+        switch ($ageGroupDisaster) {
+          case 'Children 0-5 years old': $ageWhere = "(age LIKE '%months%' OR (age >= 0 AND age <= 5) AND age NOT LIKE '%months%')"; break;
+          case 'Children 6-12 years old': $ageWhere = "(age >= 6 AND age <= 12) AND age NOT LIKE '%months%'"; break;
+          case 'Children 13-17 years old': $ageWhere = "(age >= 13 AND age <= 17) AND age NOT LIKE '%months%'"; break;
+          case 'Adult 18-35 years old': $ageWhere = "(age >= 18 AND age <= 35) AND age NOT LIKE '%months%'"; break;
+          case 'Adult 36-50 years old': $ageWhere = "(age >= 36 AND age <= 50) AND age NOT LIKE '%months%'"; break;
+          case 'Adult 51-65 years old': $ageWhere = "(age >= 51 AND age <= 65) AND age NOT LIKE '%months%'"; break;
+          case 'Adult 66 years old and above': $ageWhere = "(age >= 66) AND age NOT LIKE '%months%'"; break;
+        }
+        if ($ageWhere) {
+          $stmt = $pdo->prepare("SELECT * FROM people WHERE $ageWhere");
+          $stmt->execute();
+          $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+      } else if (strpos($filter, ':') !== false) {
+        list($col, $val) = explode(':', $filter, 2);
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
+        $stmt->execute([$val]);
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } else if ($searchValue !== '') {
+        $col = $filter;
+        if ($col === 'age') {
+          $stmt = $pdo->prepare("SELECT * FROM people WHERE age = ? AND age NOT LIKE '%months%'");
+          $stmt->execute([$searchValue]);
+        } else {
+          $stmt = $pdo->prepare("SELECT * FROM people WHERE $col LIKE ?");
+          $stmt->execute(['%' . $searchValue . '%']);
+        }
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      }
+    } elseif ($searchValue !== '' && $searchColumn === 'All') {
+      $where = [];
+      $params = [];
+      foreach ($filterOptions as $label => $col) {
+        if (strpos($col, ':') !== false) {
+          $col = explode(':', $col, 2)[0];
+        }
+        if ($col === 'age_group_dilg' || $col === 'age_group_disaster' || $col === 'senior_citizen_filter') continue;
+        $where[] = "$col LIKE ?";
+        $params[] = '%' . $searchValue . '%';
+      }
+      $stmt = $pdo->prepare("SELECT * FROM people WHERE " . implode(' OR ', $where));
+      $stmt->execute($params);
+      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    // Output
+    while (ob_get_level() > 0) ob_end_clean();
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="people_filtered.xlsx"');
+    header('Cache-Control: max-age=0');
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $colIndex = 1;
+    foreach ($columns as $col) {
+        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+        $sheet->setCellValue($colLetter . '1', str_replace('_', ' ', ucfirst($col)));
+        $colIndex++;
+    }
+    $rowIndex = 2;
+    foreach ($filteredPeople as $person) {
+        $colIndex = 1;
+        foreach ($columns as $col) {
+            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+            $sheet->setCellValue($colLetter . $rowIndex, $person[$col] ?? '');
+            $colIndex++;
+        }
+        $rowIndex++;
+    }
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
+?>
+
+<?php
 
 //page can't be accessed when not logged in
 session_start();
@@ -274,7 +431,7 @@ if (isset($filterOptions[$searchColumn])) {
     $ageWhere = '';
     switch ($ageGroupDisaster) {
       case 'Children 0-5 years old':
-        $ageWhere = "(age LIKE '%months%' OR (age >= 0 AND age <= 5 AND age NOT LIKE '%months%'))";
+        $ageWhere = "(age LIKE '%months%' OR (age >= 0 AND age <= 5) AND age NOT LIKE '%months%')";
         break;
       case 'Children 6-12 years old':
         $ageWhere = "(age >= 6 AND age <= 12) AND age NOT LIKE '%months%'";
@@ -382,7 +539,8 @@ if (isset($filterOptions[$searchColumn])) {
   <span id="resultCount" style="font-size:15px;color:#444;display:inline;"></span>
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
-
+  <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
+  <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button>
    <!-- CSV Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
@@ -795,5 +953,46 @@ $people = $filteredPeople;
   }
 </script>
 
+
+
+<!-- print and export button  -->
+<script>
+document.getElementById('exportBtn').onclick = function(e) {
+  e.preventDefault();
+  // Build query string from current filters
+  const params = new URLSearchParams(new FormData(document.getElementById('searchForm'))).toString();
+  window.location.href = 'list.php?export=1&' + params;
+};
+
+document.getElementById('printBtn').onclick = function() {
+  var printContents = document.querySelector('.table-container').outerHTML;
+  var style = `<style>body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}table{border-collapse:collapse;width:100%;background:#fff;}th,td{border:1px solid #ccc;padding:8px 12px;text-align:left;}th{background:#f0f0f0;text-transform:uppercase;}</style>`;
+    link.download = "people_list.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+
+
+<!-- print and export button  -->
+<script>
+document.getElementById('exportBtn').onclick = function(e) {
+  e.preventDefault();
+  // Build query string from current filters
+  const params = new URLSearchParams(new FormData(document.getElementById('searchForm'))).toString();
+  window.location.href = 'list.php?export=1&' + params;
+};
+
+document.getElementById('printBtn').onclick = function() {
+  var printContents = document.querySelector('.table-container').outerHTML;
+  var style = `<style>body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}table{border-collapse:collapse;width:100%;background:#fff;}th,td{border:1px solid #ccc;padding:8px 12px;text-align:left;}th{background:#f0f0f0;text-transform:uppercase;}</style>`;
+  var win = window.open('', '', 'height=900,width=1200');
+  win.document.write('<html><head><title>Print Results</title></head><body>' + style + printContents + '</body></html>');
+  win.document.close();
+  win.focus();
+  setTimeout(function() { win.print(); win.close(); }, 500);
+};
+</script>
 </body>
 </html>
