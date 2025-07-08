@@ -312,8 +312,14 @@ if (isset($filterOptions[$searchColumn])) {
     }
   } else if ($searchValue !== '') {
     $col = $filter;
-    $stmt = $pdo->prepare("SELECT * FROM people WHERE $col LIKE ?");
-    $stmt->execute(['%' . $searchValue . '%']);
+    if ($col === 'age') {
+      // Exact match for age (exclude 'months' values)
+      $stmt = $pdo->prepare("SELECT * FROM people WHERE age = ? AND age NOT LIKE '%months%'");
+      $stmt->execute([$searchValue]);
+    } else {
+      $stmt = $pdo->prepare("SELECT * FROM people WHERE $col LIKE ?");
+      $stmt->execute(['%' . $searchValue . '%']);
+    }
     if (isset($stmt)) {
       $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
       $resultCount = count($filteredPeople);
