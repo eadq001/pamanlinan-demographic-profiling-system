@@ -126,29 +126,68 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
       $stmt->execute($params);
       $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Determine export filename based on filter
+    $filename = 'people_filtered.xlsx';
+    if (isset($filterOptions[$searchColumn]) && $searchColumn !== '') {
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $searchColumn);
+        $filename = strtolower($safeName) . '_filtered.xlsx';
+    } elseif ($searchColumn === 'All' && $searchValue !== '') {
+        $filename = 'all_columns_filtered.xlsx';
+    }
     // Output
     while (ob_get_level() > 0) ob_end_clean();
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="people_filtered.xlsx"');
-    header('Cache-Control: max-age=0');
+    if (function_exists('ini_set')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
+    // Prevent any accidental whitespace or output before headers
+    if (!headers_sent()) {
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Expires: 0');
+        header('Pragma: public');
+    }
+    flush();
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+    // Set font size 12px and center alignment for all cells (use correct object)
+    $spreadsheet->getActiveSheet()->getStyle(
+        $sheet->calculateWorksheetDimension()
+    )->getFont()->setSize(12);
+    $spreadsheet->getActiveSheet()->getStyle(
+        $sheet->calculateWorksheetDimension()
+    )->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    // Set headers (all uppercase)
     $colIndex = 1;
     foreach ($columns as $col) {
         $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
-        $sheet->setCellValue($colLetter . '1', str_replace('_', ' ', ucfirst($col)));
+        $headerText = strtoupper(str_replace('_', ' ', $col));
+        $sheet->setCellValue($colLetter . '1', $headerText);
+        // Style header: bold, 12px, center
+        $sheet->getStyle($colLetter . '1')->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle($colLetter . '1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $colIndex++;
     }
+    // Set data (all center, 12px)
     $rowIndex = 2;
     foreach ($filteredPeople as $person) {
         $colIndex = 1;
         foreach ($columns as $col) {
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
             $sheet->setCellValue($colLetter . $rowIndex, $person[$col] ?? '');
+            $sheet->getStyle($colLetter . $rowIndex)->getFont()->setSize(12);
+            $sheet->getStyle($colLetter . $rowIndex)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $colIndex++;
         }
         $rowIndex++;
     }
+    // Auto-size columns
+    foreach (range(1, count($columns)) as $colIndex) {
+        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+        $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+    }
+    // Clean output buffer again just before output
+    if (ob_get_length()) ob_end_clean();
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
     $writer->save('php://output');
     exit;
