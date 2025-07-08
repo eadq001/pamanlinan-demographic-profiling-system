@@ -132,12 +132,12 @@ $purokCounts = array_column($purokData, 'count');
     <!-- FAMILY PER PUROK -->
     <div class="container">
 
-        <h2 style="text-align:center;">Families per Purok</h2>
+        <h2 style="text-align:center;">Household per Purok</h2>
         <canvas id="familyChart" width="600" height="350"></canvas>
         <div id="totalFamilies" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
             <?php
             $totalFamilies = array_sum($familyCounts);
-            echo "Total Families: " . $totalFamilies;
+            echo "Total Household: " . $totalFamilies;
             ?>
         </div>
     </div>

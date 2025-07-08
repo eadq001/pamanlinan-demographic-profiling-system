@@ -379,7 +379,7 @@ if (isset($filterOptions[$searchColumn])) {
     </select>
     <!-- Search button removed -->
   </form>
-  <span id="resultCount" style="font-size:15px;color:#444;display:<?= $searchValue !== '' ? 'inline' : 'none' ?>;">
+  <span id="resultCount" style="font-size:15px;color:#444;display:inline;"></span>
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
 

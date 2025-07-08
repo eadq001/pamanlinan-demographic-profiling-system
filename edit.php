@@ -272,7 +272,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </div>
       <div>
         <label>Women's Association</label>
-        <select name="womens_association" required>
+        <select name="womens_association">
           <option value="">-- Select --</option>
           <option value="N/A" <?php if(strtolower(trim($person['womens_association'] ?? ''))=='n/a') echo 'selected'; ?>>N/A</option>
           <option value="Yes" <?php if(strtolower(trim($person['womens_association'] ?? ''))=='yes') echo 'selected'; ?>>Yes</option>
