@@ -46,6 +46,8 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <link rel="stylesheet" href="nav.css">
+    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <title>Deceased Management</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f8f8; }
@@ -61,6 +63,18 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
     </style>
 </head>
 <body>
+<header style="margin-bottom: 50px;position:relative;">
+  <nav >
+    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="ageGroup.php">AGE GROUP</a></li>
+      <li><a href="dashboard.php">DASHBOARD</a></li>
+      <li><a href="add.php">ADD</a></li>
+      <li><a href="list.php">LISTS</a></li>
+      <li><a href="logout.php">LOGOUT</a></li>
+    </ul>
+  </nav>
+</header>
 <div class="container">
     <h2>Deceased Management</h2>
     <form method="get" action="">
