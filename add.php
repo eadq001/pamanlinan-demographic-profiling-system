@@ -392,9 +392,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <datalist id="pwd-options">
         <option>N/A</option>
-        <option value="Yes"></option>
-        <option value="No"></option>
-        <option value="Other"></option>
+        <option value="NO"></option>
+        <option value="DEAF"></option>
+        <option value="MUTE"></option>
+        <option value="INTELLECTUAL DISABILITY"></option>
+        <option value="AUTISM"></option>
+        <option value="PHYSICAL DISABILITY"></option>
+        <option value="DISABILITY WALKING OR MOVEMENT"></option>
+        <option value="HEALTH-RELATED DISABILITY (ILLNESS)"></option>
       </datalist>
       <div>
         <label>Indigenous People</label>
@@ -408,9 +413,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <datalist id="indigenous-options">
         <option>N/A</option>
-        <option value="Yes"></option>
-        <option value="No"></option>
-        <option value="Other"></option>
+        <option value="MIGRANT"></option>
+        <option value="MANDAYA"></option>
+        <option value="NO"></option>
       </datalist>
       <div>
         <label>Citizenship</label>

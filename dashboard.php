@@ -115,7 +115,7 @@ $purokCounts = array_column($purokData, 'count');
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    // Query to get families per purok (unique household_id count per purok)
+    // Query to get household per purok (unique household_id count per purok)
     $stmtFamilies = $pdo->query("
     SELECT purok_name, COUNT(DISTINCT household_id) as family_count
     FROM people
