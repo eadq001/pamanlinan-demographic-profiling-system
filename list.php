@@ -254,15 +254,16 @@ if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
 $columns = [
     'last_name', 'first_name', 'middle_name', 'ext_name', 'sex_name',
-    'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
+    'street_name', 'purok_name', 'place_of_birth', 'date_of_birth','age',
     'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
-    'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+    'occupation', 'toilet', 'school_youth', 'indigenous','pwd', 
+    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id'
 ];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name']) && is_uploaded_file($_FILES['excel_file']['tmp_name'])) {
     $filePath = $_FILES['excel_file']['tmp_name'];
     $duplicates = 0;
+    $imported = 0;
 
     try {
         $spreadsheet = IOFactory::load($filePath);
@@ -294,9 +295,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_na
 
             $insertSql = "INSERT INTO people (" . implode(", ", $columns) . ") VALUES (" . implode(", ", $values) . ")";
             $conn->query($insertSql);
+            $imported++;
         }
 
-        header("Location: " . $_SERVER['PHP_SELF'] . "?import=success&duplicates=$duplicates");
+        echo "<script>alert('Import complete. $imported record(s) imported. $duplicates duplicate(s) skipped.');window.location='list.php';</script>";
         exit;
 
     } catch (Exception $e) {
@@ -581,14 +583,14 @@ if (isset($filterOptions[$searchColumn])) {
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
   <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
-  <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button>
-   <!-- CSV Import Form -->
+  <!-- Excel Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
       <p>Import Excel File to Database</p>
       <input type="file" name="excel_file" accept=".xlsx, .xls" required>
       <input type="submit" value="Upload & Import">
     </form>
+  </div>
   </div>
 </div>
 
@@ -684,10 +686,14 @@ $people = $filteredPeople;
     <thead>
       <tr>
         <?php foreach ($columns as $col): ?>
-                    <?php if ($col == 'employed_unemployed') :?>
+          <?php if ($col == 'employed_unemployed') :?>
             <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
-            <?php else:?>
-              <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
+          <?php elseif ($col == 'womens_association') :?>
+            <th>WOMEN'S ASSOCIATION</th>
+          <?php elseif ($col == 'senior_citizen') :?>
+            <th>SENIOR CITIZEN</th>
+          <?php else:?>
+            <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
           <?php endif; ?>
         <?php endforeach; ?>
       </tr>
