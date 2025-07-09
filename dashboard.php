@@ -35,9 +35,10 @@ $purokCounts = array_column($purokData, 'count');
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS DASHBOARD</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="ageGroup.php">AGE GROUP</a></li>
+      <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
       <li><a href="deceased.php">DECEASED</a></li>
-      <li><a href="add.php">ADD</a></li>
       <li><a href="list.php">LISTS</a></li>
+      <li><a href="add.php">ADD</a></li>
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>

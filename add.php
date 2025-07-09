@@ -395,6 +395,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <option value="NO"></option>
         <option value="DEAF"></option>
         <option value="MUTE"></option>
+        <option value="BLIND"></option>
         <option value="INTELLECTUAL DISABILITY"></option>
         <option value="AUTISM"></option>
         <option value="PHYSICAL DISABILITY"></option>
@@ -445,11 +446,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="grid">
       <div>
         <label>Valid ID</label>
-        <input type="text" name="valid_id" required />
+        <input type="text" name="valid_id"  />
       </div>
       <div>
         <label>Type of ID</label>
-        <input type="text" name="type_id" required />
+        <input type="text" name="type_id"  />
       </div>
       <div>
         <label>Household ID</label>

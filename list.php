@@ -362,10 +362,11 @@ $conn->close();
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="dashboard.php">DASHBOARD</a></li>
-      <li><a href="deceased.php">DECEASED</a></li>
       <li><a href="ageGroup.php">AGE GROUP</a></li>
+      <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
+      <li><a href="deceased.php">DECEASED</a></li>
       <li><a href="add.php">ADD</a></li>
-      <li><a href="index.php">LOGOUT</a></li>
+      <li><a href="logout.php">LOGOUT</a></li>
     </ul>
     <div class="burger" id="burger">&#9776;</div>
   </nav>
