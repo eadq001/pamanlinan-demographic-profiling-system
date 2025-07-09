@@ -50,7 +50,7 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
     <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <title>Deceased Management</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f8f8; }
         .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 30px 30px 20px 30px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
         h2 { text-align: center; margin-bottom: 24px; }
         form { display: flex; justify-content: center; margin-bottom: 24px; }
