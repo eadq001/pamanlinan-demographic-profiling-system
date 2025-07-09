@@ -35,9 +35,10 @@ $purokCounts = array_column($purokData, 'count');
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS DASHBOARD</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="ageGroup.php">AGE GROUP</a></li>
+      <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
       <li><a href="deceased.php">DECEASED</a></li>
-      <li><a href="add.php">ADD</a></li>
       <li><a href="list.php">LISTS</a></li>
+      <li><a href="add.php">ADD</a></li>
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
@@ -115,7 +116,7 @@ $purokCounts = array_column($purokData, 'count');
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    // Query to get families per purok (unique household_id count per purok)
+    // Query to get household per purok (unique household_id count per purok)
     $stmtFamilies = $pdo->query("
     SELECT purok_name, COUNT(DISTINCT household_id) as family_count
     FROM people
@@ -132,12 +133,12 @@ $purokCounts = array_column($purokData, 'count');
     <!-- FAMILY PER PUROK -->
     <div class="container">
 
-        <h2 style="text-align:center;">Families per Purok</h2>
+        <h2 style="text-align:center;">Household per Purok</h2>
         <canvas id="familyChart" width="600" height="350"></canvas>
         <div id="totalFamilies" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
             <?php
             $totalFamilies = array_sum($familyCounts);
-            echo "Total Families: " . $totalFamilies;
+            echo "Total Household: " . $totalFamilies;
             ?>
         </div>
     </div>

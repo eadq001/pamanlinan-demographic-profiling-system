@@ -89,10 +89,12 @@ $results[] = [
   <nav>
     <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
     <ul class="nav-links" id="navLinks">
-      <li><a href="dashboard.php">DASHBOARD</a></li>
-            <li><a href="list.php">LISTS</a></li>
+     <li><a href="dashboard.php">DASHBOARD</a></li>
+     <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
+     <li><a href="deceased.php">DECEASED</a></li>
+     <li><a href="lists.php">LISTS</a></li>
       <li><a href="add.php">ADD</a></li>
-      <li><a href="index.php">LOGOUT</a></li>
+      <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
 </header>
@@ -196,8 +198,8 @@ $results[] = [
         var style = `<style>
             body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fff; }
             table { border-collapse: collapse; width: 90%; margin: 30px auto; background: #fff; }
-            th, td { border: 1px solid #000; padding: 10px 18px; text-align: center; color: #000; }
-            th { background: #fff; color: #000; font-size: 17px; border: 1px solid #000; }
+            th, td { border: 0.5px solid #000; padding: 10px 18px; text-align: center; color: #000; }
+            th { background: #fff; color: #000; font-size: 17px; border: 0.5px solid #000; }
             tr:last-child { font-weight: bold; background: #f0f0f0; }
             td, th { font-size: 16px; }
             caption { font-size: 22px; margin-bottom: 12px; font-weight: bold; color: #000; }
