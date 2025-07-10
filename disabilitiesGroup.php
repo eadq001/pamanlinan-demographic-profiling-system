@@ -60,7 +60,8 @@ foreach ($people as $person) {
             break;
         }
     }
-    if (!$matched) {
+    // Only count as 'OTHER DISABILITIES' if not matched and pwd is not 'NO' or empty
+    if (!$matched && $pwd !== '' && $pwd !== 'NO') {
         $table['OTHER DISABILITIES'][$ageGroup][$sex]++;
         $table['OTHER DISABILITIES']['total'][$sex]++;
     }
@@ -71,6 +72,8 @@ foreach ($people as $person) {
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="nav.css">
+      <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+
     <title>Disabilities Group Table</title>
     <style>
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
