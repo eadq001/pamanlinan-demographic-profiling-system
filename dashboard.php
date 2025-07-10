@@ -160,7 +160,7 @@ $purokCounts = array_column($purokData, 'count');
             data: {
                 labels: familyPurokNames,
                 datasets: [{
-                    label: 'Number of Families',
+                    label: 'Number of Household',
                     data: familyCounts,
                     backgroundColor: 'rgba(255, 193, 7, 0.7)',
                     borderColor: 'rgba(255, 193, 7, 1)',
