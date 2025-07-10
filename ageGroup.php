@@ -92,7 +92,7 @@ $results[] = [
      <li><a href="dashboard.php">DASHBOARD</a></li>
      <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
      <li><a href="deceased.php">DECEASED</a></li>
-     <li><a href="lists.php">LISTS</a></li>
+     <li><a href="list.php">LISTS</a></li>
       <li><a href="add.php">ADD</a></li>
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>

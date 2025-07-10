@@ -22,7 +22,7 @@ include("functions.php");
 	<title>Login</title>
 	<link rel="stylesheet" href="login.css">
 	<link rel="stylesheet" href="font.css">
-	<link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+	<link rel="shortcut icon" href="logo-pamanlinan.png" type="image/x-icon">
 </head>
 <style>
 	* {
@@ -39,18 +39,18 @@ include("functions.php");
     display: flex;
     align-items: center;
     justify-content: center;
-	background-image: url('logs.jpg');
+	background-image: url('login.jfif');
 	background-size: cover; 
     position: relative;   
   }
  
     button {
-    width: 100%;
+    width: 50%;
     height: 32px;
     border-radius: 5px;
     outline: none;
     border: none;
-    background: #057570;
+    background:rgb(37, 178, 2);
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -77,7 +77,7 @@ include("functions.php");
 		<div class="forms">
 			
 			<form method="post" class="form">
-  				<img src="pamanlinan.png" alt="">
+  				<img src="logo-pamanlinan.png" alt="">
 				<h1>Sign in to Barangay Pamanlinan</h1><br>
 				<div class="username">
 					<label for="user_name">Username</label>

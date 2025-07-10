@@ -271,7 +271,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div>
         <label>Birthdate</label>
-        <input type="text" name="date_of_birth" required placeholder="MM/DD/YYYY"><br>
+        <input type="text" name="date_of_birth" id="date_of_birth" required placeholder="MM/DD/YYYY" maxlength="10" pattern="\d{2}/\d{2}/\d{4}">
+        <small style="color:#055c61;">Format: MM/DD/YYYY</small>
       </div>
       <!-- Age input removed because it will be calculated automatically -->
       <div>
@@ -288,6 +289,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <option>Other</option>
         </select>
       </div>
+      <script>
+      // Birthdate input validation: only numbers and slashes, MM/DD/YYYY format
+      document.addEventListener('DOMContentLoaded', function() {
+        const dobInput = document.getElementById('date_of_birth');
+        dobInput.addEventListener('input', function(e) {
+          // Allow only numbers and slashes
+          this.value = this.value.replace(/[^0-9/]/g, '');
+        });
+        dobInput.addEventListener('blur', function() {
+          // Validate MM/DD/YYYY format
+          const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+          if (this.value && !regex.test(this.value)) {
+            // Show alert and clear the value so alert doesn't persist
+            alert('Please enter a valid date in MM/DD/YYYY format.');
+            this.value = '';
+            this.focus();
+          }
+        });
+      });
+      </script>
       <div>
         <label>Place of Birth</label>
         <input type="text" name="place_of_birth" required />

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+  <title>About Us</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+       background: linear-gradient(to bottom, #4facfe, #00f2fe); /* Blue gradient */
+    }
+
+    
+header {
+  background: #05767c;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+nav {
+  margin-left: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.nav-links a {
+  margin-right: 180px;
+  text-decoration: none;
+  color: rgb(2, 56, 31);
+  font-weight: bold;
+  background-color: #00f2fe;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  background-color: #035e06;
+}
+    main {
+      flex: 1;
+      max-width: 80%;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    main h1 {
+      margin-left: 15%;
+      color: #035e06;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      padding-bottom: 0.6rem;
+      
+    }
+    main p {
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      color: #555;
+    }
+    /* New image style */
+    .about-image {
+      display: block;
+      max-width: 70%;
+      height: auto;
+      margin: 1rem auto 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    footer {
+      background: #222;
+      color: #eee;
+      padding: 1.5rem 1rem 3rem;
+      text-align: center;
+      font-size: 0.9rem;
+      position: relative;
+    }
+    #mapContainer {
+      max-width: 800px;
+      width: 70%;
+      margin: 2rem auto 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    #mapContainer iframe {
+      width: 100%;
+      height: 600px;
+      border: 0;
+      display: block;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      #mapContainer iframe {
+        height: 400px;
+      }
+    }
+    @media (max-width: 480px) {
+      main {
+        margin: 2rem 1rem;
+      }
+      #mapContainer iframe {
+        height: 300px;
+      }
+    }
+       .profile-pic {
+      border-radius: 85%;
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+     margin-left: 40%;
+    }
+    main p{
+      font-size: x-large;
+      color: black;
+      text-align: justify;
+    }
+    h2{
+      font-size: 200%;
+      margin-left: 27%;
+      color: #045c08;
+      text-shadow: 0 2px 2px rgba(0, 0, 0, 0.551);
+    }
+  </style>
+</head>
+<body>
+
+    <header>
+    <nav class="navbar">
+      <div class="logo">Barangay Profile</div>
+      <ul class="nav-links">            
+        <li><a href="login.php">LOGIN</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <img src="pamanlinan.png" alt="Profile Pic" class="profile-pic" />
+    <h1>Figure No 1. Official Seal Source: Barangay Pamanlinan</h1>
+    <p>
+      The official seal of the Barangay Pamanlinan features important symbols that represent
+      the livelihood, natural resources, and identify of the community. at the center of the seal is tree
+      along with a account tree, symbolizing the barangay's connection to agriculture and its abundant
+      natural environment. A shrimp is also prominently displayed, represents fishing and aquaculture
+      as one of the main sources of income, especially in parts of the barangay such as Purok 5 & 6 
+      where fishponds are located. The green in the seal signifies growth, fertility, and the community's strong
+      ties to nature, while the color yellow represents hope, optimism, and a bright future for the people of Pamanlinan. Overall, 
+      the seal's design reflects the simplicity of rural life, sustainable livelihoods, and close relationship of the people
+      with their natural surroundings.
+    </p> <br><br>
+
+    <h2>BARANGAY PAMANLINAN MAP</h2><br>
+    <!-- Inserted image below -->
+    <img 
+      src="pamanlinan-map.jfif" 
+      alt="Office workspace" 
+      class="about-image"
+    />
+
+
+
+  <footer>
+    <div>Our Location on Map:</div>
+    <div id="mapContainer">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11169.230918982244!2d126.25953816941136!3d8.210854427732638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32fdc75f77612f93%3A0xf7fa14ea201a9de7!2sPamanlinan%2C%20City%20Of%20Bislig%2C%20Surigao%20del%20Sur%2C%20Philippines!5e0!3m2!1sen!2sus!4v1751819135945!5m2!1sen!2sus"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </footer>
+
+</body>
+</html>

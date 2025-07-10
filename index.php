@@ -81,7 +81,7 @@ if (!empty($_SESSION['user_id'])) {
     }
 
     .profile-section {
-      margin-top: 120px;
+      margin-top: 110px;
       text-align: center;
       padding: 1rem;
       animation: fadeIn 1s ease;
@@ -90,7 +90,7 @@ if (!empty($_SESSION['user_id'])) {
     }
 
     .profile-pic {
-      border-radius: 50%;
+      border-radius: 85%;
       width: 250px;
       height: 250px;
       object-fit: cover;
@@ -112,7 +112,7 @@ if (!empty($_SESSION['user_id'])) {
       font-size: bolder;
       color: rgb(15, 240, 240);
       margin-bottom: 10px;
-      font-size: 400%;
+      font-size: 500%;
       text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
       -webkit-text-stroke: 1px black;
       font-family: "Lilita One", sans-serif;
@@ -173,7 +173,7 @@ if (!empty($_SESSION['user_id'])) {
     .fancy-button {
       display: inline-block;
       text-decoration: none;
-      background-color: rgb(4, 119, 9);
+      background-color: rgb(8, 98, 12);
       color: white;
       padding: 0.35rem 2rem;
       font-size: 1rem;
@@ -211,7 +211,7 @@ if (!empty($_SESSION['user_id'])) {
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.22);
+      background-color: rgba(0, 0, 0, 0.33);
       /* Green overlay */
       z-index: 0;
     }
@@ -264,17 +264,20 @@ if (!empty($_SESSION['user_id'])) {
 </head>
 
 <body>
-  <video autoplay muted loop playsinline class="bg-video">
+
+
+  <video autoplay muted loop playsinline class="bg-video">h2
     <source src="pamanlinan.mp4" type="video/mp4">
   </video>
   <div class="overlay"></div>
 
   <section class="profile-section">
     <img src="pamanlinan.png" alt="Profile Pic" class="profile-pic" />
-    <h1>Brgy. Pamanlinan Demographic </h1>
-    <h2>Profiling System</h2><br>
+    <h1>Barangay Pamanlinan</h1>
+    <h2>Demographic Profiling System</h2><br>
     <div class="btn">
-      <a href="login.php" class="fancy-button">Login</a>
+      <a href="login.php" class="fancy-button">LOGIN</a>
+       <a href="about.html" class="fancy-button">ABOUT</a>
     </div>
   </section>
 

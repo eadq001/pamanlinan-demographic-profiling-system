@@ -242,15 +242,8 @@ $currentYear = date('Y');
 
 <?php
 require 'vendor/autoload.php';
-use PhpOffice\PhpSpreadsheet\IOFactory;
 
-// Database setup for Excel import
-$host = 'localhost';
-$db = 'pamanlinan_db';
-$user = 'root';
-$pass = '';
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+
 
 $columns = [
     'last_name', 'first_name', 'middle_name', 'ext_name', 'sex_name',
@@ -260,51 +253,9 @@ $columns = [
     'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
 ];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name'])) {
-    $filePath = $_FILES['excel_file']['tmp_name'];
-    $duplicates = 0;
 
-    try {
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getActiveSheet();
-        $rows = $sheet->toArray();
 
-        foreach ($rows as $index => $row) {
-            if ($index === 0) continue; // Skip header
-            if (count($row) < count($columns)) continue;
 
-            $last_name = $conn->real_escape_string(trim($row[0]));
-            $first_name = $conn->real_escape_string(trim($row[1]));
-            $middle_name = $conn->real_escape_string(trim($row[2]));
-
-            $checkSql = "SELECT COUNT(*) AS count FROM people 
-                         WHERE last_name='$last_name' AND first_name='$first_name' AND middle_name='$middle_name'";
-            $result = $conn->query($checkSql);
-            $exists = $result->fetch_assoc();
-
-            if ($exists['count'] > 0) {
-                $duplicates++;
-                continue;
-            }
-
-            $values = [];
-            foreach ($columns as $i => $col) {
-                $values[] = "'" . $conn->real_escape_string(trim($row[$i])) . "'";
-            }
-
-            $insertSql = "INSERT INTO people (" . implode(", ", $columns) . ") VALUES (" . implode(", ", $values) . ")";
-            $conn->query($insertSql);
-        }
-
-        header("Location: " . $_SERVER['PHP_SELF'] . "?import=success&duplicates=$duplicates");
-        exit;
-
-    } catch (Exception $e) {
-        echo "<script>alert('Error loading file: " . addslashes($e->getMessage()) . "');</script>";
-    }
-}
-
-$conn->close();
 ?>
 
 <?php if (isset($_GET['import']) && $_GET['import'] === 'success'): ?>
@@ -582,13 +533,105 @@ if (isset($filterOptions[$searchColumn])) {
   </span>
   <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
   <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button>
-   <!-- CSV Import Form -->
+   
+  <!-- Excel Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
       <p>Import Excel File to Database</p>
       <input type="file" name="excel_file" accept=".xlsx, .xls" required>
       <input type="submit" value="Upload & Import">
     </form>
+    <?php
+    // Handle Excel import (excluding age, womens_association, senior_citizen)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file']['tmp_name']) && is_uploaded_file($_FILES['excel_file']['tmp_name'])) {
+        require_once 'vendor/autoload.php';
+        $filePath = $_FILES['excel_file']['tmp_name'];
+        $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+        $duplicates = 0;
+        $imported = 0;
+        try {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray();
+            if (count($rows) < 2) {
+                echo "<script>alert('No data rows found in the Excel file.');</script>";
+            } else {
+                // Get columns from the people table and which are NOT NULL
+                $tableColsInfo = $pdo->query("DESCRIBE people")->fetchAll(PDO::FETCH_ASSOC);
+                $tableCols = [];
+                $notNullCols = [];
+                foreach ($tableColsInfo as $colInfo) {
+                    if ($colInfo['Field'] === 'id') continue;
+                    $tableCols[] = $colInfo['Field'];
+                    if ($colInfo['Null'] === 'NO' && $colInfo['Default'] === null) {
+                        $notNullCols[] = $colInfo['Field'];
+                    }
+                }
+                $header = array_map(function($h) { return strtolower(str_replace([' ', '-'], '_', trim($h))); }, $rows[0]);
+                // Map header to table columns
+                $colMap = [];
+                foreach ($header as $i => $col) {
+                    if (in_array($col, $tableCols)) {
+                        $colMap[$i] = $col;
+                    }
+                }
+                if (empty($colMap)) {
+                    echo "<script>alert('Excel header does not match any database columns. Please check your file.');</script>";
+                    return;
+                }
+                for ($i = 1; $i < count($rows); $i++) {
+                    $row = $rows[$i];
+                    $data = [];
+                    foreach ($colMap as $idx => $colName) {
+                        $cellVal = isset($row[$idx]) ? trim($row[$idx]) : null;
+                        // If required column and value is empty/null, use empty string
+                        if (in_array($colName, $notNullCols) && ($cellVal === null || $cellVal === '')) {
+                            $cellVal = '';
+                        }
+                        $data[$colName] = $cellVal;
+                    }
+                    // If all values are empty, skip
+                    if (count(array_filter($data, function($v) { return $v !== null && $v !== ''; })) === 0) continue;
+                    // Check for duplicate (by last_name, first_name, middle_name)
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM people WHERE last_name = ? AND first_name = ? AND middle_name = ?");
+                    $stmt->execute([
+                        $data['last_name'] ?? '',
+                        $data['first_name'] ?? '',
+                        $data['middle_name'] ?? ''
+                    ]);
+                    if ($stmt->fetchColumn() > 0) {
+                        $duplicates++;
+                        continue;
+                    }
+                    $insertCols = array_keys($data);
+                    $insertVals = array_values($data);
+                    $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
+                    $insertSql = "INSERT INTO people (" . implode(',', $insertCols) . ") VALUES ($placeholders)";
+                    $insertStmt = $pdo->prepare($insertSql);
+                    if (!$insertStmt->execute($insertVals)) {
+                        $error = $insertStmt->errorInfo();
+                        echo '<script>alert("Insert failed: ' . addslashes(json_encode($error)) . ' Row: ' . json_encode($data) . '");</script>';
+                    } else {
+                        $lastId = $pdo->lastInsertId();
+                        if (!$lastId) {
+                            echo '<script>alert("Insert statement executed but no row inserted. Row: ' . json_encode($data) . '");</script>';
+                        }
+                        $imported++;
+                    }
+                }
+                if ($imported === 0 && $duplicates === 0) {
+                    echo "<script>alert('No records imported. Please check your Excel file format and columns.');</script>";
+                } else {
+                    echo "<script>alert('Import complete. $imported record(s) imported. $duplicates duplicate(s) skipped.');window.location='list.php';</script>";
+                }
+            }
+        } catch (Exception $e) {
+            echo "<script>alert('Error importing file: " . addslashes($e->getMessage()) . "');</script>";
+        }
+    }
+    ?>
   </div>
 </div>
 
