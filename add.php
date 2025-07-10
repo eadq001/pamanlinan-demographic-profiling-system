@@ -48,9 +48,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $indigenous = trim($_POST['indigenous']);
     $citizenship = trim($_POST['citizenship']);
     $toilet = $_POST['toilet'];
+    $womens_association = $_POST['womens_association'];
     $valid_id = trim($_POST['valid_id']);
     $type_id = trim($_POST['type_id']);
     $household_id = trim($_POST['household_id']);
+    $family_id = trim($_POST['family_id']);
 
     // Check for duplicates
     $stmt = $conn->prepare("SELECT id FROM people WHERE first_name = ? AND last_name = ? AND middle_name = ?");
@@ -65,13 +67,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $insert = $conn->prepare("INSERT INTO people (
             first_name, last_name, middle_name, ext_name, sex_name, date_of_birth, age, civil_status,
             place_of_birth, street_name, purok_name, cellphone_no, facebook, employed_unemployed, occupation,
-            solo_parent, ofw, school_youth, pwd, indigenous, citizenship, toilet, valid_id, type_id, household_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            solo_parent, ofw, school_youth, pwd, indigenous, citizenship, toilet, womens_association, valid_id, type_id, household_id,family_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        $insert->bind_param("ssssssissssssssssssssssss",
+        $insert->bind_param("ssssssissssssssssssssssssss",
             $first_name, $last_name, $middle_name, $ext_name, $sex_name, $date_of_birth, $age, $civil_status,
             $place_of_birth, $street_name, $purok_name, $cellphone_no, $facebook, $employed_unemployed, $occupation,
-            $solo_parent, $ofw, $school_youth, $pwd, $indigenous, $citizenship, $toilet, $valid_id, $type_id, $household_id
+            $solo_parent, $ofw, $school_youth, $pwd, $indigenous, $citizenship, $toilet, $womens_association, $valid_id, $type_id, $household_id, $family_id
         );
 
         if ($insert->execute()) {
@@ -477,6 +479,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label>Household ID</label>
           <input type="text" name="household_id" required />
         </div>
+        <div>
+            <label>Family ID</label>
+              <input type="text" name="family_id" required />
+            </div>
+    </div>
     </div>
 
     </div>

@@ -10,7 +10,7 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
         'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
         'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-        'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+        'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'family_id' ,'womens_association', 'senior_citizen'
     ];
     $filterOptions = [
       "Last Name" => "last_name",
@@ -222,8 +222,8 @@ if (isset($_POST['import']) && isset($_FILES['csv_file'])) {
                     street_name, purok_name, place_of_birth, date_of_birth, age,
                     civil_status, citizenship, employed_unemployed, solo_parent, ofw,
                     occupation, toilet, school_youth, pwd, indigenous,
-                    cellphone_no, facebook, valid_id, type_id, household_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    cellphone_no, facebook, valid_id, type_id, household_id, family_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute($row);
         }
@@ -250,7 +250,7 @@ $columns = [
     'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
     'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
     'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'family_id', 'womens_association', 'senior_citizen'
 ];
 
 
@@ -803,6 +803,7 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
           <td><?= htmlspecialchars($person['household_id']) ?></td>
+          <td><?= htmlspecialchars($person['family_id']) ?></td>
           <td><?= htmlspecialchars($person['womens_association']) ?></td>
             <?php
             // Determine if person is a senior citizen (age 60 and above)

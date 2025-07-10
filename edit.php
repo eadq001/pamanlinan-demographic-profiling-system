@@ -39,7 +39,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
     <title>Document</title>
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
-    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+  <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
 </head>
 <body>
     
@@ -167,7 +167,6 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
           name="employed_unemployed"
           list="employed_unemployed-options"
           placeholder="Select or type occupation"
-          required
           value="<?php echo htmlspecialchars($person['employed_unemployed'] ?? ''); ?>"
         />
       </div>
@@ -179,7 +178,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </datalist>
       <div>
         <label>Occupation</label>
-        <input type="text" name="occupation" required value="<?php echo htmlspecialchars($person['occupation'] ?? ''); ?>" />
+        <input type="text" name="occupation" value="<?php echo htmlspecialchars($person['occupation'] ?? ''); ?>" />
       </div>
       <div>
         <label>Solo Parent</label>
@@ -300,6 +299,10 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       <div>
         <label>Household ID</label>
           <input type="text" name="household_id" required value="<?php echo htmlspecialchars($person['household_id'] ?? ''); ?>" />
+        </div>
+        <div>
+        <label>Family ID</label>
+          <input type="text" name="family_id" required value="<?php echo htmlspecialchars($person['family_id'] ?? ''); ?>" />
         </div>
     </div>
 
