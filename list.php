@@ -103,8 +103,8 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         $resultCount = count($filteredPeople);
       }
        else if ($filter === 'ofw') {
-        // Show only people with PWD value not 'NO' and not blank
-        $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM()) != 'NO'");
+        // Show only people with OFW value not 'NO' and not blank
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
         $stmt->execute();
         $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $resultCount = count($filteredPeople);
@@ -466,6 +466,12 @@ if (isset($filterOptions[$searchColumn])) {
   } else if ($filter === 'pwd') {
     // Show only people with PWD value not 'NO' and not blank
     $stmt = $pdo->prepare("SELECT * FROM people WHERE pwd IS NOT NULL AND TRIM(pwd) != '' AND UPPER(TRIM(pwd)) != 'NO'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'ofw') {
+    // Show only people with OFW value not 'NO' and not blank
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
     $stmt->execute();
     $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $resultCount = count($filteredPeople);
