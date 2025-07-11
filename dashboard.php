@@ -29,7 +29,7 @@ $purokCounts = array_column($purokData, 'count');
 
 </head>
 
-<body>
+<body style="background: linear-gradient(to right, #6ca0a3, #ffffff);">
     <header style="margin-bottom: 50px;position:relative;">
   <nav style="display: flex;align-items:center;justify-content:space-between;">
     <div class="logo">BPDR DASHBOARD</div>
@@ -508,7 +508,7 @@ $purokCounts = array_column($purokData, 'count');
 <!-- Export Charts Section -->
 <div style="margin:40px 0;text-align:center;">
     <h3>Export Chart Data to Excel</h3>
-    <form id="exportForm" style="display:inline-block;margin-top:0;">
+    <form id="exportForm" style="display:inline-block;margin-top:10px;">
         <select id="chartSelect" name="chartSelect" style="padding:6px 12px;font-size:1em;">
             <option value="all">All Charts</option>
             <option value="purok">Population per Purok</option>

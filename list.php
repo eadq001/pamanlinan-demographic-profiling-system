@@ -727,11 +727,17 @@ $people = $filteredPeople;
     <thead>
       <tr>
         <?php foreach ($columns as $col): ?>
-                    <?php if ($col == 'employed_unemployed') :?>
-            <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
-            <?php else:?>
-              <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
-          <?php endif; ?>
+            <?php if ($col == 'employed_unemployed'): ?>
+                <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
+            <?php elseif ($col == 'sex_name'): ?>
+                <th><?= htmlspecialchars(str_replace(['_','name'],['', ''], $col)) ?></th>
+            <?php elseif ($col == 'purok_name'): ?>
+                <th><?= htmlspecialchars(str_replace(['_','name'],['', ''], $col)) ?></th>
+            <?php elseif ($col == 'street_name'): ?>
+                <th><?= htmlspecialchars(str_replace(['_','name'],['', ''], $col)) ?></th>
+            <?php else: ?>
+                <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
+            <?php endif; ?>
         <?php endforeach; ?>
       </tr>
     </thead>

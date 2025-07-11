@@ -114,7 +114,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
         <select name="civil_status" required>
           <option value="">-- Select --</option>
           <?php
-          $statuses = ['N/A','Single','Married','Widowed','Separated','Divorced','Live-in','Other'];
+          $statuses = ['N/A','Single','Married','Widowed','Separated','Divorced','Common Law','Other'];
           foreach($statuses as $status) {
             $sel = (strtolower(trim($person['civil_status'] ?? '')) == strtolower($status)) ? 'selected' : '';
             echo "<option value=\"$status\" $sel>$status</option>";

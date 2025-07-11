@@ -50,7 +50,7 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
     <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <title>Deceased Management</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f8f8; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #6ca0a3, #ffffff); }
         .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 30px 30px 20px 30px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
         h2 { text-align: center; margin-bottom: 24px; }
         form { display: flex; justify-content: center; margin-bottom: 24px; }
@@ -172,7 +172,59 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
                     <td><?= htmlspecialchars($person['sex_name']) ?></td>
                     <td><?= htmlspecialchars($person['date_of_birth']) ?></td>
                     <td><?= htmlspecialchars($person['purok_name']) ?></td>
-                    <td><?= htmlspecialchars($person['cause_of_death']) ?></td>
+                    <td>
+                        <span class="cause-of-death-text"><?= htmlspecialchars($person['cause_of_death']) ?></span>
+                        <button type="button" class="edit-cause-btn" style="margin-left:8px;padding:2px 8px;font-size:13px;">Edit</button>
+                        <form class="edit-cause-form" method="post" style="display:none;margin:0;">
+                            <input type="hidden" name="edit_deceased_id" value="<?= $person['id'] ?>" />
+                            <input type="text" name="new_cause_of_death" value="<?= htmlspecialchars($person['cause_of_death']) ?>" style="width:120px;padding:2px 6px;font-size:13px;" required />
+                            <button type="submit" style="padding:2px 8px;font-size:13px;">Save</button>
+                            <button type="button" class="cancel-edit-btn" style="padding:2px 8px;font-size:13px;">Cancel</button>
+                        </form>
+                    </td>
+                    <?php
+                    // Handle edit cause of death
+                    if (isset($_POST['edit_deceased_id']) && isset($_POST['new_cause_of_death'])) {
+                        $editId = intval($_POST['edit_deceased_id']);
+                        $newCause = trim($_POST['new_cause_of_death']);
+                        $stmt = $pdo->prepare("UPDATE deceased SET cause_of_death = ? WHERE id = ?");
+                        $stmt->execute([$newCause, $editId]);
+                        // Prevent popup by redirecting back to the page
+                        echo '<script>window.location.href=window.location.pathname;</script>';
+                        exit;
+                    }
+                    ?>
+                    <script>
+                    document.querySelectorAll('.edit-cause-btn').forEach(function(btn) {
+                        btn.onclick = function(e) {
+                            e.stopPropagation(); // Prevent row click event
+                            const td = btn.closest('td');
+                            td.querySelector('.cause-of-death-text').style.display = 'none';
+                            btn.style.display = 'none';
+                            td.querySelector('.edit-cause-form').style.display = 'inline-block';
+                            td.querySelector('input[name="new_cause_of_death"]').focus();
+                        };
+                    });
+                    document.querySelectorAll('.cancel-edit-btn').forEach(function(btn) {
+                        btn.onclick = function(e) {
+                            e.stopPropagation(); // Prevent row click event
+                            const td = btn.closest('td');
+                            td.querySelector('.cause-of-death-text').style.display = '';
+                            td.querySelector('.edit-cause-btn').style.display = '';
+                            td.querySelector('.edit-cause-form').style.display = 'none';
+                        };
+                    });
+                    // Prevent popup when saving edit
+                    document.querySelectorAll('.edit-cause-form').forEach(function(form) {
+                        form.onsubmit = function(e) {
+                            // Prevent row click event (popup) when saving
+                            e.stopPropagation();
+                        };
+                        form.addEventListener('click', function(e) {
+                            e.stopPropagation(); // Prevent row click event when clicking inside the form
+                        });
+                    });
+                    </script>
                 </tr>
             <?php endforeach; ?>
             </tbody>

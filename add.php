@@ -287,7 +287,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <option>Widowed</option>
           <option>Separated</option>
           <option>Divorced</option>
-          <option>Live-in</option>
+          <option>Common Law</option>
           <option>Other</option>
         </select>
       </div>
