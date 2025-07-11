@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       width: 100%;
       z-index: 1000;
       background-color: #055c61;
-      padding: 1.5rem;
+      padding: 1rem;
       flex-wrap: wrap;
       justify-content: space-between;
     }

@@ -99,7 +99,7 @@ $results[] = [
   </nav>
 </header>
     <table id="ageGroupTable">
-        <caption>DILG Population by Age Group and Sex</caption>
+        <caption>DILG AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>
@@ -169,7 +169,7 @@ $results[] = [
     ?>
 
     <table id="customAgeGroupTable">
-        <caption>DISASTER Population by Age Groups and Sex</caption>
+        <caption>DISASTER AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>

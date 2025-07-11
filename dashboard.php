@@ -32,7 +32,7 @@ $purokCounts = array_column($purokData, 'count');
 <body style="background: linear-gradient(to right, #6ca0a3, #ffffff);">
     <header style="margin-bottom: 50px;position:relative;">
   <nav style="display: flex;align-items:center;justify-content:space-between;">
-    <div class="logo">BPDR DASHBOARD</div>
+    <div class="logo">DASHBOARD</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="ageGroup.php">AGE GROUP</a></li>
       <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
@@ -43,7 +43,7 @@ $purokCounts = array_column($purokData, 'count');
     </ul>
   </nav>
 </header>
-<main style="margin-left:30px;">
+<main style="padding:0 30px;">
 
 
     <!-- PUROK POPULATION -->
