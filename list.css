@@ -57,8 +57,7 @@ nav {
   font-weight: bolder;
 }
 
-.import {
-}
+
 
 /* Container */
 .table-container {
@@ -89,7 +88,7 @@ th, td {
 
 thead th {
   position: sticky;
-  top: 0;
+  top: -4px;
   padding:20px;
   background-color: #057570;
   color: white;
