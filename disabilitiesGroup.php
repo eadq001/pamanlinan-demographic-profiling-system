@@ -103,7 +103,7 @@ foreach ($people as $person) {
     <h2>Disabilities Group Table</h2>
     <table>
     <tr>
-        <th rowspan="2" class="kinds_of_disability">KINDS OF DISABILITY</th>
+        <th rowspan="2" class="kinds_of_disability">TYPES OF DISABILITY</th>
         <th colspan="2">CHILD<br>(17 YRS OLD AND BELOW)</th>
         <th colspan="2">ADULT<br>(18-59 YRS OLD)</th>
         <th colspan="2">ELDERLY<br>(60 AND ABOVE)</th>

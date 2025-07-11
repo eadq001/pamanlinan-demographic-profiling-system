@@ -36,10 +36,10 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Edit Details</title>
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
-  <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
 </head>
 <body>
     
