@@ -508,7 +508,7 @@ $purokCounts = array_column($purokData, 'count');
 <!-- Export Charts Section -->
 <div style="margin:40px 0;text-align:center;">
     <h3>Export Chart Data to Excel</h3>
-    <form id="exportForm" style="display:inline-block;">
+    <form id="exportForm" style="display:inline-block;margin-top:0;">
         <select id="chartSelect" name="chartSelect" style="padding:6px 12px;font-size:1em;">
             <option value="all">All Charts</option>
             <option value="purok">Population per Purok</option>
@@ -518,7 +518,7 @@ $purokCounts = array_column($purokData, 'count');
             <option value="gender">Genders per Purok</option>
             <option value="osy">Out-of-School Youth per Purok</option>
         </select>
-        <button type="button" id="exportBtn" style="padding:6px 18px;font-size:1em;background:#057570;color:#fff;border:none;border-radius:4px;cursor:pointer;">Export to Excel</button>
+        <button type="button" id="exportBtn" style="margin-top:10px;padding:6px 18px;font-size:1em;background:#057570;color:#fff;border:none;border-radius:4px;cursor:pointer;">Export to Excel</button>
     </form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -526,7 +526,35 @@ $purokCounts = array_column($purokData, 'count');
     function exportToExcel(sheetData, sheetName, fileName) {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(sheetData);
-        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+        // Autofit columns
+        const colWidths = sheetData[0].map((_, colIdx) => {
+            let maxLen = 0;
+            sheetData.forEach(row => {
+                const cell = row[colIdx];
+                const len = cell ? cell.toString().length : 0;
+                if (len > maxLen) maxLen = len;
+            });
+            return { wch: Math.max(maxLen + 2, 12) };
+        });
+        ws['!cols'] = colWidths;
+
+        // Center all cells and format header
+        for (let R = 0; R < sheetData.length; ++R) {
+            for (let C = 0; C < sheetData[0].length; ++C) {
+                const cellRef = XLSX.utils.encode_cell({r:R, c:C});
+                if (!ws[cellRef]) continue;
+                ws[cellRef].s = ws[cellRef].s || {};
+                ws[cellRef].s.alignment = { horizontal: "center", vertical: "center" };
+                if (R === 0) {
+                    ws[cellRef].s.font = { bold: true, color: { rgb: "FFFFFF" } };
+                    ws[cellRef].s.fill = { fgColor: { rgb: "057570" } };
+                }
+            }
+        }
+
+        wb.SheetNames.push(sheetName);
+        wb.Sheets[sheetName] = ws;
         XLSX.writeFile(wb, fileName);
     }
 
@@ -583,7 +611,35 @@ $purokCounts = array_column($purokData, 'count');
                 const data = getChartData(chart.key);
                 if (data) {
                     const ws = XLSX.utils.aoa_to_sheet(data);
-                    XLSX.utils.book_append_sheet(wb, ws, chart.name);
+
+                    // Autofit columns
+                    const colWidths = data[0].map((_, colIdx) => {
+                        let maxLen = 0;
+                        data.forEach(row => {
+                            const cell = row[colIdx];
+                            const len = cell ? cell.toString().length : 0;
+                            if (len > maxLen) maxLen = len;
+                        });
+                        return { wch: Math.max(maxLen + 2, 12) };
+                    });
+                    ws['!cols'] = colWidths;
+
+                    // Center all cells and format header
+                    for (let R = 0; R < data.length; ++R) {
+                        for (let C = 0; C < data[0].length; ++C) {
+                            const cellRef = XLSX.utils.encode_cell({r:R, c:C});
+                            if (!ws[cellRef]) continue;
+                            ws[cellRef].s = ws[cellRef].s || {};
+                            ws[cellRef].s.alignment = { horizontal: "center", vertical: "center" };
+                            if (R === 0) {
+                                ws[cellRef].s.font = { bold: true, color: { rgb: "FFFFFF" } };
+                                ws[cellRef].s.fill = { fgColor: { rgb: "057570" } };
+                            }
+                        }
+                    }
+
+                    wb.SheetNames.push(chart.name);
+                    wb.Sheets[chart.name] = ws;
                 }
             });
             XLSX.writeFile(wb, 'dashboard_charts.xlsx');
@@ -602,6 +658,7 @@ $purokCounts = array_column($purokData, 'count');
             exportToExcel(data, sheetName, fileName);
         }
     });
+</script>
 </script>
 </body>
 
