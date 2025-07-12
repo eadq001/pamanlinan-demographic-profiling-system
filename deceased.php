@@ -1,4 +1,10 @@
 <?php
+//page can't be accessed when not logged in
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
