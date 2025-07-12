@@ -98,7 +98,7 @@ foreach ($people as $person) {
   </nav>
 </header>
 <body>
-    <h2>Disabilities Group Table</h2>
+    <h2 style="text-transform:uppercase;">Disabilities Group Table</h2>
     <table>
     <tr>
         <th rowspan="2" class="kinds_of_disability">KINDS OF DISABILITY</th>

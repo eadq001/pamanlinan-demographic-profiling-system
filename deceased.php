@@ -77,7 +77,7 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
   </nav>
 </header>
 <div class="container">
-    <h2>Deceased Management</h2>
+    <h2 style="text-transform:uppercase;">Deceased Management</h2>
     <form method="get" action="">
         <input type="text" name="search" placeholder="Search by Last, First, or Middle Name" value="<?= htmlspecialchars($search) ?>" autofocus />
         <button type="submit">Search</button>
