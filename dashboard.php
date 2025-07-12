@@ -29,10 +29,10 @@ $purokCounts = array_column($purokData, 'count');
 
 </head>
 
-<body>
+<body style="background: linear-gradient(to right, #6ca0a3, #ffffff);">
     <header style="margin-bottom: 50px;position:relative;">
   <nav style="display: flex;align-items:center;justify-content:space-between;">
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS DASHBOARD</div>
+    <div class="logo">DASHBOARD</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="ageGroup.php">AGE GROUP</a></li>
       <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
@@ -43,7 +43,7 @@ $purokCounts = array_column($purokData, 'count');
     </ul>
   </nav>
 </header>
-<main style="margin-left:30px;">
+<main style="padding:0 30px;">
 
 
     <!-- PUROK POPULATION -->
@@ -130,7 +130,7 @@ $purokCounts = array_column($purokData, 'count');
     ?>
 
 
-    <!-- FAMILY PER PUROK -->
+    <!-- HOUSEHOLD PER PUROK -->
     <div class="container">
 
         <h2 style="text-align:center;">Household per Purok</h2>
@@ -197,31 +197,101 @@ $purokCounts = array_column($purokData, 'count');
         });
     </script>
 
+        <?php
+        // Query to get families per purok, counting unique family_id per purok
+        $stmtFamilyID = $pdo->query("
+            SELECT purok_name, COUNT(DISTINCT family_id) as family_id_count
+            FROM people
+            WHERE family_id IS NOT NULL AND family_id != ''
+            GROUP BY purok_name
+            ORDER BY purok_name
+        ");
+        $familyIDData = $stmtFamilyID->fetchAll(PDO::FETCH_ASSOC);
+        $familyIDPurokNames = array_column($familyIDData, 'purok_name');
+        $familyIDCounts = array_column($familyIDData, 'family_id_count');
+        ?>
+
+        <!-- FAMILIES PER PUROK (by family_id) -->
+        <div class="container">
+            <h2 style="text-align:center;">Families per Purok</h2>
+            <canvas id="familyIDChart" width="600" height="350"></canvas>
+            <div id="totalFamilyID" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
+                <?php
+                $totalFamilyID = array_sum($familyIDCounts);
+                echo "Total Families: $totalFamilyID";
+                ?>
+            </div>
+        </div>
+
+        <script>
+            const familyIDPurokNames = <?php echo json_encode($familyIDPurokNames); ?>;
+            const familyIDCounts = <?php echo json_encode($familyIDCounts); ?>;
+            const familyIDCtx = document.getElementById('familyIDChart').getContext('2d');
+            new Chart(familyIDCtx, {
+                type: 'bar',
+                data: {
+                    labels: familyIDPurokNames,
+                    datasets: [{
+                        label: 'Number of Families',
+                        data: familyIDCounts,
+                        backgroundColor: 'rgba(255, 87, 34, 0.7)',
+                        borderColor: 'rgba(255, 87, 34, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Purok Name'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Families'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+
     <?php
-    // Query to get toilet data per purok (count of 'Yes' and 'No' per purok)
+    // Query to get toilets per purok, counting only unique household_id with toilet = 'Yes'
     $stmtToilets = $pdo->query("
-        SELECT purok_name,
-            SUM(CASE WHEN toilet = 'Yes' THEN 1 ELSE 0 END) AS yes_count,
-            SUM(CASE WHEN toilet = 'No' THEN 1 ELSE 0 END) AS no_count
+        SELECT purok_name, COUNT(DISTINCT household_id) AS yes_count
         FROM people
+        WHERE toilet = 'Yes' AND household_id IS NOT NULL AND household_id != ''
         GROUP BY purok_name
         ORDER BY purok_name
     ");
     $toiletData = $stmtToilets->fetchAll(PDO::FETCH_ASSOC);
     $toiletPurokNames = array_column($toiletData, 'purok_name');
     $toiletYesCounts = array_column($toiletData, 'yes_count');
-    $toiletNoCounts = array_column($toiletData, 'no_count');
     ?>
 
     <!-- TOILETS PER PUROK -->
     <div class="container">
-        <h2 style="text-align:center;">Toilets per Purok</h2>
+        <h2 style="text-align:center;">Households with Toilet per Purok</h2>
         <canvas id="toiletChart" width="600" height="350"></canvas>
         <div id="totalToilets" style="text-align:center;margin-top:18px;font-size:1.2em;color:#057570;font-weight:bold;">
             <?php
             $totalYes = array_sum($toiletYesCounts);
-            $totalNo = array_sum($toiletNoCounts);
-            echo "Total with Toilet: $totalYes | Total without Toilet: $totalNo";
+            echo "Total Households with Toilet: $totalYes";
             ?>
         </div>
     </div>
@@ -229,7 +299,6 @@ $purokCounts = array_column($purokData, 'count');
     <script>
         const toiletPurokNames = <?php echo json_encode($toiletPurokNames); ?>;
         const toiletYesCounts = <?php echo json_encode($toiletYesCounts); ?>;
-        const toiletNoCounts = <?php echo json_encode($toiletNoCounts); ?>;
         const toiletCtx = document.getElementById('toiletChart').getContext('2d');
         new Chart(toiletCtx, {
             type: 'bar',
@@ -237,18 +306,10 @@ $purokCounts = array_column($purokData, 'count');
                 labels: toiletPurokNames,
                 datasets: [
                     {
-                        label: 'With Toilet (Yes)',
+                        label: 'Households with Toilet',
                         data: toiletYesCounts,
                         backgroundColor: 'rgba(40, 167, 69, 0.7)',
                         borderColor: 'rgba(40, 167, 69, 1)',
-                        borderWidth: 2,
-                        borderRadius: 6,
-                    },
-                    {
-                        label: 'Without Toilet (No)',
-                        data: toiletNoCounts,
-                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                        borderColor: 'rgba(220, 53, 69, 1)',
                         borderWidth: 2,
                         borderRadius: 6,
                     }
@@ -258,7 +319,7 @@ $purokCounts = array_column($purokData, 'count');
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: true
+                        display: false
                     },
                     title: {
                         display: false
@@ -443,6 +504,162 @@ $purokCounts = array_column($purokData, 'count');
         });
     </script>
 </main>
+
+<!-- Export Charts Section -->
+<div style="margin:40px 0;text-align:center;">
+    <h3>Export Chart Data to Excel</h3>
+    <form id="exportForm" style="display:inline-block;margin-top:10px;">
+        <select id="chartSelect" name="chartSelect" style="padding:6px 12px;font-size:1em;">
+            <option value="all">All Charts</option>
+            <option value="purok">Population per Purok</option>
+            <option value="household">Household per Purok</option>
+            <option value="families">Families per Purok</option>
+            <option value="toilet">Households with Toilet per Purok</option>
+            <option value="gender">Genders per Purok</option>
+            <option value="osy">Out-of-School Youth per Purok</option>
+        </select>
+        <button type="button" id="exportBtn" style="margin-top:10px;padding:6px 18px;font-size:1em;background:#057570;color:#fff;border:none;border-radius:4px;cursor:pointer;">Export to Excel</button>
+    </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    function exportToExcel(sheetData, sheetName, fileName) {
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+        // Autofit columns
+        const colWidths = sheetData[0].map((_, colIdx) => {
+            let maxLen = 0;
+            sheetData.forEach(row => {
+                const cell = row[colIdx];
+                const len = cell ? cell.toString().length : 0;
+                if (len > maxLen) maxLen = len;
+            });
+            return { wch: Math.max(maxLen + 2, 12) };
+        });
+        ws['!cols'] = colWidths;
+
+        // Center all cells and format header
+        for (let R = 0; R < sheetData.length; ++R) {
+            for (let C = 0; C < sheetData[0].length; ++C) {
+                const cellRef = XLSX.utils.encode_cell({r:R, c:C});
+                if (!ws[cellRef]) continue;
+                ws[cellRef].s = ws[cellRef].s || {};
+                ws[cellRef].s.alignment = { horizontal: "center", vertical: "center" };
+                if (R === 0) {
+                    ws[cellRef].s.font = { bold: true, color: { rgb: "FFFFFF" } };
+                    ws[cellRef].s.fill = { fgColor: { rgb: "057570" } };
+                }
+            }
+        }
+
+        wb.SheetNames.push(sheetName);
+        wb.Sheets[sheetName] = ws;
+        XLSX.writeFile(wb, fileName);
+    }
+
+    function getChartData(chartKey) {
+        switch(chartKey) {
+            case 'purok':
+                return [
+                    ['Purok Name', 'Population'],
+                    ...purokNames.map((name, i) => [name, purokCounts[i]])
+                ];
+            case 'household':
+                return [
+                    ['Purok Name', 'Household Count'],
+                    ...familyPurokNames.map((name, i) => [name, familyCounts[i]])
+                ];
+            case 'families':
+                return [
+                    ['Purok Name', 'Families Count'],
+                    ...familyIDPurokNames.map((name, i) => [name, familyIDCounts[i]])
+                ];
+            case 'toilet':
+                return [
+                    ['Purok Name', 'Households with Toilet'],
+                    ...toiletPurokNames.map((name, i) => [name, toiletYesCounts[i]])
+                ];
+            case 'gender':
+                return [
+                    ['Purok Name', 'Male', 'Female'],
+                    ...genderPurokNames.map((name, i) => [name, maleCounts[i], femaleCounts[i]])
+                ];
+            case 'osy':
+                return [
+                    ['Purok Name', 'Out-of-School Youth'],
+                    ...osyPurokNames.map((name, i) => [name, osyCounts[i]])
+                ];
+            default:
+                return null;
+        }
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', function() {
+        const selected = document.getElementById('chartSelect').value;
+        if (selected === 'all') {
+            const wb = XLSX.utils.book_new();
+            const charts = [
+                {key:'purok', name:'Population'},
+                {key:'household', name:'Household'},
+                {key:'families', name:'Families'},
+                {key:'toilet', name:'Toilet'},
+                {key:'gender', name:'Gender'},
+                {key:'osy', name:'OSY'}
+            ];
+            charts.forEach(chart => {
+                const data = getChartData(chart.key);
+                if (data) {
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+
+                    // Autofit columns
+                    const colWidths = data[0].map((_, colIdx) => {
+                        let maxLen = 0;
+                        data.forEach(row => {
+                            const cell = row[colIdx];
+                            const len = cell ? cell.toString().length : 0;
+                            if (len > maxLen) maxLen = len;
+                        });
+                        return { wch: Math.max(maxLen + 2, 12) };
+                    });
+                    ws['!cols'] = colWidths;
+
+                    // Center all cells and format header
+                    for (let R = 0; R < data.length; ++R) {
+                        for (let C = 0; C < data[0].length; ++C) {
+                            const cellRef = XLSX.utils.encode_cell({r:R, c:C});
+                            if (!ws[cellRef]) continue;
+                            ws[cellRef].s = ws[cellRef].s || {};
+                            ws[cellRef].s.alignment = { horizontal: "center", vertical: "center" };
+                            if (R === 0) {
+                                ws[cellRef].s.font = { bold: true, color: { rgb: "FFFFFF" } };
+                                ws[cellRef].s.fill = { fgColor: { rgb: "057570" } };
+                            }
+                        }
+                    }
+
+                    wb.SheetNames.push(chart.name);
+                    wb.Sheets[chart.name] = ws;
+                }
+            });
+            XLSX.writeFile(wb, 'dashboard_charts.xlsx');
+        } else {
+            const data = getChartData(selected);
+            let sheetName = '';
+            let fileName = '';
+            switch(selected) {
+                case 'purok': sheetName='Population'; fileName='population_per_purok.xlsx'; break;
+                case 'household': sheetName='Household'; fileName='household_per_purok.xlsx'; break;
+                case 'families': sheetName='Families'; fileName='families_per_purok.xlsx'; break;
+                case 'toilet': sheetName='Toilet'; fileName='toilet_per_purok.xlsx'; break;
+                case 'gender': sheetName='Gender'; fileName='gender_per_purok.xlsx'; break;
+                case 'osy': sheetName='OSY'; fileName='osy_per_purok.xlsx'; break;
+            }
+            exportToExcel(data, sheetName, fileName);
+        }
+    });
+</script>
+</script>
 </body>
 
 </html>

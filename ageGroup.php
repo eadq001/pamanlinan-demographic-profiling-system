@@ -56,7 +56,7 @@ $results[] = [
   <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
-    <title>Age Group Summary</title>
+    <title>Age Group Categories</title>
     <style>
         table { border-collapse: collapse; width: 60%; margin: 40px auto; background: #fff; }
         th, td { border: 1px solid #000; padding: 10px 18px; text-align: center; color: #000; }
@@ -99,7 +99,7 @@ $results[] = [
   </nav>
 </header>
     <table id="ageGroupTable">
-        <caption>DILG Population by Age Group and Sex</caption>
+        <caption>DILG AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>
@@ -169,7 +169,7 @@ $results[] = [
     ?>
 
     <table id="customAgeGroupTable">
-        <caption>DISASTER Population by Age Groups and Sex</caption>
+        <caption>DISASTER AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>

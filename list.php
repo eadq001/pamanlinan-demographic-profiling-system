@@ -95,7 +95,21 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
           $stmt->execute();
           $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-      } else if (strpos($filter, ':') !== false) {
+      } else if ($filter === 'pwd') {
+        // Show only people with PWD value not 'NO' and not blank
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE pwd IS NOT NULL AND TRIM(pwd) != '' AND UPPER(TRIM(pwd)) != 'NO'");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
+      }
+       else if ($filter === 'ofw') {
+        // Show only people with OFW value not 'NO' and not blank
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
+      }
+      else if (strpos($filter, ':') !== false) {
         list($col, $val) = explode(':', $filter, 2);
         $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
         $stmt->execute([$val]);
@@ -319,7 +333,6 @@ $columns = [
       <li><a href="add.php">ADD</a></li>
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
-    <div class="burger" id="burger">&#9776;</div>
   </nav>
 </header>
 
@@ -450,6 +463,18 @@ if (isset($filterOptions[$searchColumn])) {
       $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
       $resultCount = count($filteredPeople);
     }
+  } else if ($filter === 'pwd') {
+    // Show only people with PWD value not 'NO' and not blank
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE pwd IS NOT NULL AND TRIM(pwd) != '' AND UPPER(TRIM(pwd)) != 'NO'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'ofw') {
+    // Show only people with OFW value not 'NO' and not blank
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
   } else if (strpos($filter, ':') !== false) {
     // For Employed/Unemployed exact match, ignore search value
     list($col, $val) = explode(':', $filter, 2);
@@ -495,7 +520,7 @@ if (isset($filterOptions[$searchColumn])) {
 ?>
 
 
-<div style="margin: 24px 0 18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+<div class="import" style="margin: 24px 0 18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
   <form id="searchForm" method="get" action="list.php" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
     <input type="text" id="searchInput" name="search_value" placeholder="Search..." value="<?= htmlspecialchars($searchValue) ?>" style="padding:7px 12px;border:1px solid #bbb;border-radius:4px;min-width:180px;">
     <select id="columnSelect" name="search_column" style="padding:7px 10px;border:1px solid #bbb;border-radius:4px;">
@@ -528,7 +553,7 @@ if (isset($filterOptions[$searchColumn])) {
     </select>
     <!-- Search button removed -->
   </form>
-  <span id="resultCount" style="font-size:15px;color:#444;display:inline;"></span>
+  <span id="resultCount" style="font-size:15px;color:#444;display:inline;margin-left:-30px"></span>
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
   <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
@@ -537,7 +562,7 @@ if (isset($filterOptions[$searchColumn])) {
   <!-- Excel Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
-      <p>Import Excel File to Database</p>
+      <p style="margin-right:-12px;">Import Excel File to Database</p>
       <input type="file" name="excel_file" accept=".xlsx, .xls" required>
       <input type="submit" value="Upload & Import">
     </form>
@@ -1078,5 +1103,8 @@ document.getElementById('printBtn').onclick = function() {
   setTimeout(function() { win.print(); win.close(); }, 500);
 };
 </script>
+
+
+
 </body>
 </html>
