@@ -568,12 +568,12 @@ if (isset($filterOptions[$searchColumn])) {
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
   <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
-  <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button>
+  <!-- <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button> -->
    
   <!-- Excel Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
-      <p style="margin-right:-12px;">Import Excel File to Database</p>
+      <p style="margin-right:-12px;">Import Excel File</p>
       <input type="file" name="excel_file" accept=".xlsx, .xls" required>
       <input type="submit" value="Upload & Import">
     </form>
