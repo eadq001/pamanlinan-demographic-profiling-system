@@ -319,6 +319,14 @@ $columns = [
       background-color: #f0f0f0;
       text-transform: uppercase;
     }
+
+    #exportBtn, #printBtn {
+      transition: all 0.4s;
+    }
+
+    #exportBtn:hover, #printBtn:hover {
+      background-color:rgb(25, 117, 202) !important;
+    }
   </style>
 </head>
 <body>
