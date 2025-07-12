@@ -39,6 +39,7 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
       "Valid ID" => "valid_id",
       "ID Type" => "type_id",
       "Household ID" => "household_id",
+      "Family ID" => "family_id",
       "Age Group DILG" => "age_group_dilg",
       "Age Group DISASTER" => "age_group_disaster",
       "Womens Association" => "womens_association",
@@ -366,6 +367,8 @@ $filterOptions = [
   "Valid ID" => "valid_id",
   "ID Type" => "type_id",
   "Household ID" => "household_id",
+   "Family ID" => "family_id",
+
   // Add Age Group DILG filter
   "Age Group DILG" => "age_group_dilg",
   // Add Age Group DISASTER filter

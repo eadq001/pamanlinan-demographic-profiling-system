@@ -1,5 +1,11 @@
 <?php
+//page can't be accessed when not logged in
 session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -43,6 +49,8 @@ if ($search !== '') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+
     <title>Delete Resident</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #6ca0a3, #ffffff); }
