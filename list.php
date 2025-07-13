@@ -10,7 +10,7 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
         'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
         'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-        'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+        'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'family_id','womens_association', 'senior_citizen'
     ];
     $filterOptions = [
       "Last Name" => "last_name",
@@ -39,6 +39,7 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
       "Valid ID" => "valid_id",
       "ID Type" => "type_id",
       "Household ID" => "household_id",
+      "Family ID" => "family_id",
       "Age Group DILG" => "age_group_dilg",
       "Age Group DISASTER" => "age_group_disaster",
       "Womens Association" => "womens_association",
@@ -95,6 +96,26 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
           $stmt->execute();
           $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
+      } else if ($filter === 'pwd') {
+        // Show only people with PWD value not 'NO' and not blank
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE pwd IS NOT NULL AND TRIM(pwd) != '' AND UPPER(TRIM(pwd)) != 'NO'");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
+      }
+       else if ($filter === 'ofw') {
+        // Show only people with OFW value not 'NO' and not blank
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
+        $stmt->execute();
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
+      }
+      else if ($filter === 'sex_name' && $searchValue !== '') {
+        // Exact match for sex_name (case-insensitive)
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE LOWER(sex_name) = LOWER(?)");
+        $stmt->execute([$searchValue]);
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
       } else if (strpos($filter, ':') !== false) {
         list($col, $val) = explode(':', $filter, 2);
         $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
@@ -222,8 +243,8 @@ if (isset($_POST['import']) && isset($_FILES['csv_file'])) {
                     street_name, purok_name, place_of_birth, date_of_birth, age,
                     civil_status, citizenship, employed_unemployed, solo_parent, ofw,
                     occupation, toilet, school_youth, pwd, indigenous,
-                    cellphone_no, facebook, valid_id, type_id, household_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    cellphone_no, facebook, valid_id, type_id, family_id, household_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute($row);
         }
@@ -250,7 +271,7 @@ $columns = [
     'street_name', 'purok_name', 'place_of_birth', 'date_of_birth', 'age',
     'civil_status', 'citizenship', 'employed_unemployed', 'solo_parent', 'ofw',
     'occupation', 'toilet', 'school_youth', 'pwd', 'indigenous',
-    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id', 'womens_association', 'senior_citizen'
+    'cellphone_no', 'facebook', 'valid_id', 'type_id', 'household_id','family_id', 'womens_association', 'senior_citizen'
 ];
 
 
@@ -304,6 +325,14 @@ $columns = [
       background-color: #f0f0f0;
       text-transform: uppercase;
     }
+
+    #exportBtn, #printBtn {
+      transition: all 0.4s;
+    }
+
+    #exportBtn:hover, #printBtn:hover {
+      background-color:rgb(25, 117, 202) !important;
+    }
   </style>
 </head>
 <body>
@@ -319,7 +348,6 @@ $columns = [
       <li><a href="add.php">ADD</a></li>
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
-    <div class="burger" id="burger">&#9776;</div>
   </nav>
 </header>
 
@@ -353,6 +381,8 @@ $filterOptions = [
   "Valid ID" => "valid_id",
   "ID Type" => "type_id",
   "Household ID" => "household_id",
+   "Family ID" => "family_id",
+
   // Add Age Group DILG filter
   "Age Group DILG" => "age_group_dilg",
   // Add Age Group DISASTER filter
@@ -450,15 +480,29 @@ if (isset($filterOptions[$searchColumn])) {
       $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
       $resultCount = count($filteredPeople);
     }
+  } else if ($filter === 'pwd') {
+    // Show only people with PWD value not 'NO' and not blank
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE pwd IS NOT NULL AND TRIM(pwd) != '' AND UPPER(TRIM(pwd)) != 'NO'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'ofw') {
+    // Show only people with OFW value not 'NO' and not blank
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE ofw IS NOT NULL AND TRIM(ofw) != '' AND UPPER(TRIM(ofw)) != 'NO'");
+    $stmt->execute();
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
+  } else if ($filter === 'sex_name' && $searchValue !== '') {
+    // Exact match for sex_name (case-insensitive)
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE LOWER(sex_name) = LOWER(?)");
+    $stmt->execute([$searchValue]);
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
   } else if (strpos($filter, ':') !== false) {
-    // For Employed/Unemployed exact match, ignore search value
     list($col, $val) = explode(':', $filter, 2);
     $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
     $stmt->execute([$val]);
-    if (isset($stmt)) {
-      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      $resultCount = count($filteredPeople);
-    }
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else if ($searchValue !== '') {
     $col = $filter;
     if ($col === 'age') {
@@ -495,7 +539,7 @@ if (isset($filterOptions[$searchColumn])) {
 ?>
 
 
-<div style="margin: 24px 0 18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+<div class="import" style="margin: 24px 0 18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
   <form id="searchForm" method="get" action="list.php" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
     <input type="text" id="searchInput" name="search_value" placeholder="Search..." value="<?= htmlspecialchars($searchValue) ?>" style="padding:7px 12px;border:1px solid #bbb;border-radius:4px;min-width:180px;">
     <select id="columnSelect" name="search_column" style="padding:7px 10px;border:1px solid #bbb;border-radius:4px;">
@@ -528,16 +572,16 @@ if (isset($filterOptions[$searchColumn])) {
     </select>
     <!-- Search button removed -->
   </form>
-  <span id="resultCount" style="font-size:15px;color:#444;display:inline;"></span>
+  <span id="resultCount" style="font-size:15px;color:#444;display:inline;margin-left:-30px"></span>
     Showing <?= $resultCount ?> out of <?= $totalCount ?> result<?= $resultCount === 1 ? '' : 's' ?>
   </span>
   <button id="exportBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Export to Excel</button>
-  <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button>
+  <!-- <button id="printBtn" style="padding:7px 18px;background:#6ca0a3;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;">Print</button> -->
    
   <!-- Excel Import Form -->
   <div class="upload-files-box">
     <form action="list.php" method="post" enctype="multipart/form-data" class="upload_files">
-      <p>Import Excel File to Database</p>
+      <p style="margin-right:-12px;">Import Excel File</p>
       <input type="file" name="excel_file" accept=".xlsx, .xls" required>
       <input type="submit" value="Upload & Import">
     </form>
@@ -588,7 +632,7 @@ if (isset($filterOptions[$searchColumn])) {
                         $cellVal = isset($row[$idx]) ? trim($row[$idx]) : null;
                         // If required column and value is empty/null, use empty string
                         if (in_array($colName, $notNullCols) && ($cellVal === null || $cellVal === '')) {
-                            $cellVal = '';
+                          $cellVal = '';
                         }
                         $data[$colName] = $cellVal;
                     }
@@ -727,11 +771,19 @@ $people = $filteredPeople;
     <thead>
       <tr>
         <?php foreach ($columns as $col): ?>
-                    <?php if ($col == 'employed_unemployed') :?>
-            <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
-            <?php else:?>
-              <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
-          <?php endif; ?>
+            <?php if ($col == 'employed_unemployed'): ?>
+                <th><?= htmlspecialchars(str_replace('_','/', $col)) ?></th>
+            <?php elseif ($col == 'sex_name'): ?>
+                <th>SEX</th>
+            <?php elseif ($col == 'purok_name'): ?>
+                <th>PUROK</th>
+            <?php elseif ($col == 'street_name'): ?>
+                <th>STREET</th>
+            <?php elseif ($col == 'school_youth'): ?>
+                <th>OUT OF SCHOOL YOUTH</th>
+            <?php else: ?>
+                <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
+            <?php endif; ?>
         <?php endforeach; ?>
       </tr>
     </thead>
@@ -803,6 +855,7 @@ $people = $filteredPeople;
           <td><?= htmlspecialchars(rtrim($person['valid_id'])) ?></td>
           <td><?= htmlspecialchars(rtrim($person['type_id'])) ?></td>
           <td><?= htmlspecialchars($person['household_id']) ?></td>
+          <td><?= htmlspecialchars($person['family_id']) ?></td>
           <td><?= htmlspecialchars($person['womens_association']) ?></td>
             <?php
             // Determine if person is a senior citizen (age 60 and above)
@@ -835,8 +888,8 @@ $people = $filteredPeople;
       <script>
         document.addEventListener('keydown', function(e) {
           const tableContainer = document.querySelector('.table-container');
-          const scrollSpeed = 140; // Adjust scroll speed as needed
-          const scrollDuration = 300; // Duration for smooth scrolling in milliseconds
+          const scrollSpeed = 100; // Adjust scroll speed as needed
+          const scrollDuration = 100; // Duration for smooth scrolling in milliseconds
 
           function smoothScrollBy(x, y) {
         const startTime = performance.now();
@@ -1078,5 +1131,8 @@ document.getElementById('printBtn').onclick = function() {
   setTimeout(function() { win.print(); win.close(); }, 500);
 };
 </script>
+
+
+
 </body>
 </html>

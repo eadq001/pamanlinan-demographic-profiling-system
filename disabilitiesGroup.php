@@ -1,4 +1,10 @@
 <?php
+//page can't be accessed when not logged in
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -60,7 +66,7 @@ foreach ($people as $person) {
             break;
         }
     }
-    // Only count as 'OTHER DISABILITIES' if not matched and pwd is not 'NO' or empty
+    // Only count as 'OTHER DISABILITIES' if not matched and pwd is not blank or 'NO'
     if (!$matched && $pwd !== '' && $pwd !== 'NO') {
         $table['OTHER DISABILITIES'][$ageGroup][$sex]++;
         $table['OTHER DISABILITIES']['total'][$sex]++;
@@ -72,9 +78,7 @@ foreach ($people as $person) {
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="nav.css">
-      <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
-
-    <title>Disabilities Group Table</title>
+    <title>DisabilIties Records</title>
     <style>
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
        h2 {text-align:center;}
@@ -88,19 +92,17 @@ foreach ($people as $person) {
 </head>
 <header style="margin-bottom: 50px;position:relative;">
   <nav >
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <div class="logo">TYPES OF DISABILITY RECORDS</div>
     <ul class="nav-links" id="navLinks">
         <li><a href="dashboard.php">DASHBOARD</a></li>
-      <li><a href="ageGroup.php">AGE GROUP</a></li>
-      <li><a href="deceased.php">DECEASED</a></li>
-      <li><a href="list.php">LISTS</a></li>
-      <li><a href="add.php">ADD</a></li>
+            <li><a href="list.php">LISTS</a></li>
+    
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
 </header>
 <body>
-    <h2>Disabilities Group Table</h2>
+    <h2 style="text-transform:uppercase;">Disabilities Group Table</h2>
     <table>
     <tr>
         <th rowspan="2" class="kinds_of_disability">KINDS OF DISABILITY</th>

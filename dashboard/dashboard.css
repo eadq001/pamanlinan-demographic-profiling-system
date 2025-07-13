@@ -1,3 +1,8 @@
+       * {
+        box-sizing: border-box;
+       }
+       
+       
        html {
         scroll-behavior: smooth;
        }
@@ -103,7 +108,6 @@
             background: #049b8a;
         }
         .container {
-            max-width: 700px;
             /* margin: 40px auto; */
             margin: 0 !important;
             background: #fff;
@@ -133,7 +137,7 @@
         main {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 1rem;
             
         }
 
