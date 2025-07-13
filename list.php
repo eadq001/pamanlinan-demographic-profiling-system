@@ -878,8 +878,8 @@ $people = $filteredPeople;
       <script>
         document.addEventListener('keydown', function(e) {
           const tableContainer = document.querySelector('.table-container');
-          const scrollSpeed = 140; // Adjust scroll speed as needed
-          const scrollDuration = 300; // Duration for smooth scrolling in milliseconds
+          const scrollSpeed = 100; // Adjust scroll speed as needed
+          const scrollDuration = 100; // Duration for smooth scrolling in milliseconds
 
           function smoothScrollBy(x, y) {
         const startTime = performance.now();
