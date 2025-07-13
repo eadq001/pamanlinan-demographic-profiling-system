@@ -110,7 +110,7 @@ include("functions.php");
 				if (password_verify($password, $user_data['password'])) {
 
 					$_SESSION['user_id'] = $user_data['user_id'];
-					header("Location: list.php");
+					header("Location: dashboard.php");
 					die;
 				} else {
 					echo "<p style='color:red !important;'> wrong username or password!</p>";
