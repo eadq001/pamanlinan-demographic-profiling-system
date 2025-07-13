@@ -80,13 +80,11 @@ $deceasedPeople = $pdo->query("SELECT * FROM deceased ORDER BY last_name, first_
 <body>
 <header style="margin-bottom: 50px;position:relative;">
   <nav >
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <div class="logo">DECEASED RECORDS</div>
     <ul class="nav-links" id="navLinks">
-         <li><a href="dashboard.php">DASHBOARD</a></li>
-      <li><a href="ageGroup.php">AGE GROUP</a></li>
-      <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
-      <li><a href="list.php">LISTS</a></li>
-      <li><a href="add.php">ADD</a></li>
+        <li><a href="dashboard.php">DASHBOARD</a></li>
+            <li><a href="list.php">LISTS</a></li>
+    
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>

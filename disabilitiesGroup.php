@@ -78,7 +78,7 @@ foreach ($people as $person) {
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="nav.css">
-    <title>Disabilities Group Table</title>
+    <title>DisabilIties Records</title>
     <style>
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
        h2 {text-align:center;}
@@ -92,13 +92,11 @@ foreach ($people as $person) {
 </head>
 <header style="margin-bottom: 50px;position:relative;">
   <nav >
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <div class="logo">TYPES OF DISABILITY RECORDS</div>
     <ul class="nav-links" id="navLinks">
         <li><a href="dashboard.php">DASHBOARD</a></li>
-      <li><a href="ageGroup.php">AGE GROUP</a></li>
-      <li><a href="deceased.php">DECEASED</a></li>
-      <li><a href="list.php">LISTS</a></li>
-      <li><a href="add.php">ADD</a></li>
+            <li><a href="list.php">LISTS</a></li>
+    
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>

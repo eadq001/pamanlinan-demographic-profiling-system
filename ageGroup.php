@@ -93,13 +93,11 @@ $results[] = [
 <body>
     <header>
   <nav>
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <div class="logo">DILG/DISASTER POPULATION RECORDS</div>
     <ul class="nav-links" id="navLinks">
-     <li><a href="dashboard.php">DASHBOARD</a></li>
-     <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
-     <li><a href="deceased.php">DECEASED</a></li>
-     <li><a href="list.php">LISTS</a></li>
-      <li><a href="add.php">ADD</a></li>
+        <li><a href="dashboard.php">DASHBOARD</a></li>
+            <li><a href="list.php">LISTS</a></li>
+    
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
