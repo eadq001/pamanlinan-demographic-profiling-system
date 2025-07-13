@@ -110,7 +110,13 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $resultCount = count($filteredPeople);
       }
-      else if (strpos($filter, ':') !== false) {
+      else if ($filter === 'sex_name' && $searchValue !== '') {
+        // Exact match for sex_name (case-insensitive)
+        $stmt = $pdo->prepare("SELECT * FROM people WHERE LOWER(sex_name) = LOWER(?)");
+        $stmt->execute([$searchValue]);
+        $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultCount = count($filteredPeople);
+      } else if (strpos($filter, ':') !== false) {
         list($col, $val) = explode(':', $filter, 2);
         $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
         $stmt->execute([$val]);
@@ -486,15 +492,17 @@ if (isset($filterOptions[$searchColumn])) {
     $stmt->execute();
     $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $resultCount = count($filteredPeople);
+  } else if ($filter === 'sex_name' && $searchValue !== '') {
+    // Exact match for sex_name (case-insensitive)
+    $stmt = $pdo->prepare("SELECT * FROM people WHERE LOWER(sex_name) = LOWER(?)");
+    $stmt->execute([$searchValue]);
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $resultCount = count($filteredPeople);
   } else if (strpos($filter, ':') !== false) {
-    // For Employed/Unemployed exact match, ignore search value
     list($col, $val) = explode(':', $filter, 2);
     $stmt = $pdo->prepare("SELECT * FROM people WHERE $col = ?");
     $stmt->execute([$val]);
-    if (isset($stmt)) {
-      $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      $resultCount = count($filteredPeople);
-    }
+    $filteredPeople = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else if ($searchValue !== '') {
     $col = $filter;
     if ($col === 'age') {
@@ -624,7 +632,7 @@ if (isset($filterOptions[$searchColumn])) {
                         $cellVal = isset($row[$idx]) ? trim($row[$idx]) : null;
                         // If required column and value is empty/null, use empty string
                         if (in_array($colName, $notNullCols) && ($cellVal === null || $cellVal === '')) {
-                            $cellVal = '';
+                          $cellVal = '';
                         }
                         $data[$colName] = $cellVal;
                     }
@@ -771,6 +779,8 @@ $people = $filteredPeople;
                 <th>PUROK</th>
             <?php elseif ($col == 'street_name'): ?>
                 <th>STREET</th>
+            <?php elseif ($col == 'school_youth'): ?>
+                <th>OUT OF SCHOOL YOUTH</th>
             <?php else: ?>
                 <th><?= htmlspecialchars(str_replace('_',' ', $col)) ?></th>
             <?php endif; ?>
