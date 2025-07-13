@@ -277,7 +277,7 @@ if (!empty($_SESSION['user_id'])) {
     <h2>Demographic Profiling System</h2><br>
     <div class="btn">
       <a href="login.php" class="fancy-button">LOGIN</a>
-       <a href="about.html" class="fancy-button">ABOUT</a>
+       <a href="about.html" class="fancy-button" style="display:none;">ABOUT</a>
     </div>
   </section>
 
