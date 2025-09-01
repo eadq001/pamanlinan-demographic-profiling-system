@@ -45,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
+
     <title>Create User</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f8fb; }

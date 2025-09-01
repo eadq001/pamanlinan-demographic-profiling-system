@@ -1,18 +1,18 @@
 <?php
-//page can't be accessed when not logged in
+// page can't be accessed when not logged in
 session_start();
 if (empty($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "pamanlinan_db");
+$conn = new mysqli('localhost', 'root', '', 'pamanlinan_db');
 
 // Get all POST values
 $fields = [
     'last_name', 'first_name', 'middle_name', 'ext_name', 'sex_name', 'date_of_birth', 'age', 'civil_status',
     'place_of_birth', 'street_name', 'purok_name', 'cellphone_no', 'facebook', 'employed_unemployed', 'occupation',
-    'solo_parent', 'ofw', 'school_youth', 'pwd', 'indigenous', 'citizenship', 'toilet', 'valid_id', 'type_id', 'household_id', 'womens_association'
+    'solo_parent', 'ofw', 'school_youth', 'pwd', 'indigenous', 'citizenship', 'toilet', 'valid_id', 'type_id', 'household_id','family_id', 'womens_association'
 ];
 
 $data = [];
@@ -26,8 +26,8 @@ $orig_first_name = isset($_POST['orig_first_name']) ? $_POST['orig_first_name'] 
 $orig_middle_name = isset($_POST['orig_middle_name']) ? $_POST['orig_middle_name'] : '';
 
 // Find the person's id using the original names
-$stmt = $conn->prepare("SELECT id FROM people WHERE last_name=? AND first_name=? AND middle_name=? LIMIT 1");
-$stmt->bind_param("sss", $orig_last_name, $orig_first_name, $orig_middle_name);
+$stmt = $conn->prepare('SELECT id FROM people WHERE last_name=? AND first_name=? AND middle_name=? LIMIT 1');
+$stmt->bind_param('sss', $orig_last_name, $orig_first_name, $orig_middle_name);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
@@ -36,17 +36,17 @@ $stmt->close();
 if ($row) {
     $id = $row['id'];
     // Prepare update statement (24 fields + id = 25)
-    $sql = "UPDATE people SET 
+    $sql = 'UPDATE people SET 
         last_name=?, first_name=?, middle_name=?, ext_name=?, sex_name=?, date_of_birth=?, age=?, civil_status=?, place_of_birth=?, 
         street_name=?, purok_name=?, cellphone_no=?, facebook=?, employed_unemployed=?, occupation=?, solo_parent=?, ofw=?, 
-        school_youth=?, pwd=?, indigenous=?, citizenship=?, toilet=?, valid_id=?, type_id=?, household_id = ?, womens_association = ?
-        WHERE id=?";
+        school_youth=?, pwd=?, indigenous=?, citizenship=?, toilet=?, valid_id=?, type_id=?, household_id = ?,  family_id = ?,  womens_association = ?
+        WHERE id=?';
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
-        "ssssssssssssssssssssssssssi",
+        'sssssssssssssssssssssssssssi',
         $data['last_name'], $data['first_name'], $data['middle_name'], $data['ext_name'], $data['sex_name'], $data['date_of_birth'], $data['age'], $data['civil_status'],
         $data['place_of_birth'], $data['street_name'], $data['purok_name'], $data['cellphone_no'], $data['facebook'], $data['employed_unemployed'], $data['occupation'],
-        $data['solo_parent'], $data['ofw'], $data['school_youth'], $data['pwd'], $data['indigenous'], $data['citizenship'], $data['toilet'], $data['valid_id'], $data['type_id'],$data['household_id'],$data['womens_association'],
+        $data['solo_parent'], $data['ofw'], $data['school_youth'], $data['pwd'], $data['indigenous'], $data['citizenship'], $data['toilet'], $data['valid_id'], $data['type_id'], $data['household_id'], $data['family_id'], $data['womens_association'],
         $id
     );
     if ($stmt->execute()) {
@@ -70,26 +70,26 @@ if ($row) {
                 }, 1000);
             };
         </script>";
-        
+
         echo "<script>
             var urlParams = new URLSearchParams(window.location.search);
             var listState = urlParams.toString();
             window.opener.location.href = 'list.php?' + listState;
             window.opener.location.reload();
         </script>";
-        
-        echo "<script>
+
+        echo '<script>
             setTimeout(function() {
                 window.close();
             }, 1000);
-        </script>";
+        </script>';
         exit();
     } else {
-        echo "Error updating record: " . $stmt->error;
+        echo 'Error updating record: ' . $stmt->error;
     }
     $stmt->close();
 } else {
-    echo "Person not found.";
+    echo 'Person not found.';
 }
 
 $conn->close();

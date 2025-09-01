@@ -1,4 +1,3 @@
-
 <?php
 //page can't be accessed when not logged in
 session_start();
@@ -36,10 +35,10 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" href="pamanlinan.png" type="image/png">
+    <title>Edit Details</title>
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
-    <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
 </head>
 <body>
     
@@ -103,7 +102,48 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </div>
       <div>
         <label>Birthdate</label>
-        <input type="text" name="date_of_birth" required placeholder="MM/DD/YYYY" value="<?php echo htmlspecialchars($person['date_of_birth'] ?? ''); ?>"><br>
+        <input type="text" name="date_of_birth" id="date_of_birth" required placeholder="MM/DD/YYYY" value="<?php echo htmlspecialchars($person['date_of_birth'] ?? ''); ?>"><br>
+        <script>
+      // Birthdate input validation: only numbers and slashes, MM/DD/YYYY format, and must be a valid date in the past
+      document.addEventListener('DOMContentLoaded', function() {
+        const dobInput = document.getElementById('date_of_birth');
+        dobInput.addEventListener('input', function(e) {
+          // Allow only numbers and slashes
+          this.value = this.value.replace(/[^0-9\/]/g, '');
+        });
+        dobInput.addEventListener('blur', function() {
+          // Validate MM/DD/YYYY format
+          const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+          if (this.value && !regex.test(this.value)) {
+            alert('Please enter a valid date in MM/DD/YYYY format.');
+            this.value = '';
+            this.focus();
+            return;
+          }
+          // Check if date is valid and in the past
+          const parts = this.value.split('/');
+          if (parts.length === 3) {
+            const mm = parseInt(parts[0], 10);
+            const dd = parseInt(parts[1], 10);
+            const yyyy = parseInt(parts[2], 10);
+            const dateObj = new Date(yyyy, mm - 1, dd);
+            const today = new Date();
+            if (dateObj.getFullYear() !== yyyy || dateObj.getMonth() !== mm - 1 || dateObj.getDate() !== dd) {
+              alert('Please enter a valid calendar date.');
+              this.value = '';
+              this.focus();
+              return;
+            }
+            if (dateObj > today) {
+              alert('Birthdate cannot be in the future.');
+              this.value = '';
+              this.focus();
+              return;
+            }
+          }
+        });
+      });
+      </script>
       </div>
       <div>
         <label>Age</label>
@@ -114,7 +154,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
         <select name="civil_status" required>
           <option value="">-- Select --</option>
           <?php
-          $statuses = ['N/A','Single','Married','Widowed','Separated','Divorced','Live-in','Other'];
+          $statuses = ['N/A','Single','Married','Widowed','Separated','Divorced','Common Law','Other'];
           foreach($statuses as $status) {
             $sel = (strtolower(trim($person['civil_status'] ?? '')) == strtolower($status)) ? 'selected' : '';
             echo "<option value=\"$status\" $sel>$status</option>";
@@ -167,7 +207,6 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
           name="employed_unemployed"
           list="employed_unemployed-options"
           placeholder="Select or type occupation"
-          required
           value="<?php echo htmlspecialchars($person['employed_unemployed'] ?? ''); ?>"
         />
       </div>
@@ -179,7 +218,7 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
       </datalist>
       <div>
         <label>Occupation</label>
-        <input type="text" name="occupation" required value="<?php echo htmlspecialchars($person['occupation'] ?? ''); ?>" />
+        <input type="text" name="occupation" value="<?php echo htmlspecialchars($person['occupation'] ?? ''); ?>" />
       </div>
       <div>
         <label>Solo Parent</label>
@@ -301,6 +340,10 @@ echo "Middle Name: " . htmlspecialchars($middle_name) . "<br>";
         <label>Household ID</label>
           <input type="text" name="household_id" required value="<?php echo htmlspecialchars($person['household_id'] ?? ''); ?>" />
         </div>
+        <div>
+        <label>Family ID</label>
+          <input type="text" name="family_id" required value="<?php echo htmlspecialchars($person['family_id'] ?? ''); ?>" />
+        </div>
     </div>
 
     <button type="submit">Save</button>
@@ -334,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
 
 </body>
 </html>

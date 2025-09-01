@@ -1,4 +1,10 @@
 <?php
+//page can't be accessed when not logged in
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
 // Database connection
 $pdo = new PDO('mysql:host=localhost;dbname=pamanlinan_db', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -56,7 +62,7 @@ $results[] = [
   <link rel="shortcut icon" href="pamanlinan.png" type="image/x-icon">
     <link rel="stylesheet" href="add.css" />
     <link rel="stylesheet" href="add2.css" />
-    <title>Age Group Summary</title>
+    <title>Age Group Categories</title>
     <style>
         table { border-collapse: collapse; width: 60%; margin: 40px auto; background: #fff; }
         th, td { border: 1px solid #000; padding: 10px 18px; text-align: center; color: #000; }
@@ -87,19 +93,17 @@ $results[] = [
 <body>
     <header>
   <nav>
-    <div class="logo">BARANGAY PAMANLINAN DEMOGRAPHIC RECORDS</div>
+    <div class="logo">DILG/DISASTER POPULATION RECORDS</div>
     <ul class="nav-links" id="navLinks">
-     <li><a href="dashboard.php">DASHBOARD</a></li>
-     <li><a href="disabilitiesGroup.php">DISABILITIES</a></li>
-     <li><a href="deceased.php">DECEASED</a></li>
-     <li><a href="list.php">LISTS</a></li>
-      <li><a href="add.php">ADD</a></li>
+        <li><a href="dashboard.php">DASHBOARD</a></li>
+            <li><a href="list.php">LISTS</a></li>
+    
       <li><a href="logout.php">LOGOUT</a></li>
     </ul>
   </nav>
 </header>
     <table id="ageGroupTable">
-        <caption>DILG Population by Age Group and Sex</caption>
+        <caption>DILG AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>
@@ -169,7 +173,7 @@ $results[] = [
     ?>
 
     <table id="customAgeGroupTable">
-        <caption>DISASTER Population by Age Groups and Sex</caption>
+        <caption>DISASTER AGE GROUP CATEGORIES</caption>
         <thead>
             <tr>
                 <th>Age Groups</th>
